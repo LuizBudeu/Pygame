@@ -14,8 +14,11 @@ class Game:
         self.game()
 
     def game(self):
-        player_card = self.players[0].show_and_choose_options()
-        ai_card = self.players[1].choose_card()
+        player_card, n_used = self.players[0].play_card()
+        ai_card, n_used = self.players[1].play_card()
+
+        """ for player in players:
+            self.hand_new_cards """
 
     def hand_player_cards(self):
         for i, player in enumerate(self.players):
