@@ -1,13 +1,14 @@
-from settings import all_cards_stats, all_combos
+from settings import *
 from card import Card
 
 
 class Player:
-    def __init__(self, num):
+    def __init__(self, num, health=30):
         self.num = num
         self.deck = []
         self.hand = []
         self.used_cards = []
+        self.health = health
 
     def show_hand(self):
         print(f"-----------------------------Player {self.num} Hand---------------------------------")
@@ -58,7 +59,7 @@ class Player:
                             print("")
                             decided = True
                             just_used_cards.append(selected_card)
-                            play_card = self.get_card_from_name(selected_card.name, 'c')
+                            play_card = self.hand[self.hand.index(selected_card)]
                         elif confirm_choice == 'n':
                             print("")
                         else:
@@ -75,9 +76,7 @@ class Player:
                 else:
                     print("ERROR: Wrong input in combo decision.\n")
 
-        for card in just_used_cards:
-            self.hand.remove(card)
-            self.used_cards.append(card)
+        self.use_up_cards(just_used_cards)
 
         return play_card, len(just_used_cards)
 
@@ -102,6 +101,11 @@ class Player:
         else:
             print("ERROR: Wrong input in combo decision.\n")
             return
+
+    def use_up_cards(self, just_used_cards):
+        for card in just_used_cards:
+            self.hand.remove(card)
+            self.used_cards.append(card)
 
     def get_card_hand_index(self, card):
         return self.hand.index(card)+1

@@ -10,17 +10,27 @@ class Game:
         self.players = [Player(1), Ai(2)]
         self.decks = [self.get_deck(), self.get_deck()]
         self.shuffle_decks()
-        self.hand_player_cards()
+        self.hand_players_cards()
         self.game()
 
     def game(self):
-        player_card, n_used = self.players[0].play_card()
-        ai_card, n_used = self.players[1].play_card()
+        player_card, player_n_used = self.players[0].play_card()
+        ai_card, ai_n_used = self.players[1].play_card()
 
-        """ for player in players:
-            self.hand_new_cards """
+        self.battle(player_card, ai_card)
 
-    def hand_player_cards(self):
+        self.hand_new_cards(self.players[0], player_n_used)
+        self.hand_new_cards(self.players[1], ai_n_used)
+
+    def battle(self, player_card, ai_card):
+        print(f"Player Card: {player_card.name.upper()}")
+        print(f"Enemy Card: {ai_card.name.upper()}")
+
+    def hand_new_cards(self, player, n_used):
+        player.hand.append(player.deck[:n_used])
+        player.deck = player.deck[n_used:]
+
+    def hand_players_cards(self):
         for i, player in enumerate(self.players):
             player.deck = self.decks[i]
             player.hand = player.deck[:5]
