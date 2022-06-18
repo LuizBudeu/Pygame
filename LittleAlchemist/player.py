@@ -97,7 +97,7 @@ class Player:
 
         if choice.lower() == 'c':
             return
-        elif choice in self.get_temp_hand_indices(temp_hand) or int(choice) == self.get_card_hand_index(selected_card):
+        elif choice in self.get_temp_hand_indices(temp_hand) or int(choice) == self.get_card_hand_index(selected_card): # TODO fix enter
             return choice
         else:
             print("ERROR: Wrong input in combo decision.\n")

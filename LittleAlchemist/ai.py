@@ -17,8 +17,10 @@ class Ai(Player):
                 temp_hand = self.get_temp_hand(self.get_card_hand_index(card))
                 possible_combo_cards = self.get_possible_combo_cards(card, temp_hand)
 
+                card_combos = {}
                 for pcc in possible_combo_cards:
-                    all_possible_combos[card] = {pcc: self.get_combo_result_name(card, pcc)}
+                    card_combos[pcc] = self.get_combo_result_name(card, pcc)
+                    all_possible_combos[card] = card_combos
         
 
         print(all_possible_combos)
