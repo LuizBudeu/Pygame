@@ -20,8 +20,8 @@ class Player:
         decided = False
         play_card = None
         just_used_cards = []
-        while not decided:
 
+        while not decided:
             self.show_hand()
             choice = input("Select a card: ")
             if choice not in ['1', '2', '3', '4', '5']:
@@ -91,16 +91,20 @@ class Player:
             self.combable_cards_indexes.append(str(self.get_card_hand_index(card)))
             print(f"{self.get_card_hand_index(card)}: Combo with {card.name.upper()} --> {self.display_card_with_stats(result_card_name)})")
         
-        choice = input(f"Choose card number {possible_combo_cards_indices} to combo, [{self.get_card_hand_index(selected_card)}] to play selected card without comboing, or press 'C' to cancel: ")
+        choice = input(f"Choose card number {possible_combo_cards_indices} to combo, [{self.get_card_hand_index(selected_card)}] to play selected card without comboing, or press anything else to cancel: ")
         print("")
 
-        if choice.lower() == 'c':
+        if choice not in ['1', '2', '3', '4', '5']:
             return
-        elif choice in self.get_temp_hand_indices(temp_hand) or int(choice) == self.get_card_hand_index(selected_card): # TODO fix enter
+        """ elif choice in self.get_temp_hand_indices(temp_hand) or int(choice) == self.get_card_hand_index(selected_card): 
             return choice
         else:
             print("ERROR: Wrong input in combo decision.\n")
-            return
+            return """
+        return choice
+
+    def show_chosen_card_stats(self, chosen_card):
+        print(f"Player {self.num} Card: {chosen_card.name.upper()} --- Attack: {chosen_card.attack}\tDefense: {chosen_card.defense}")
 
     def use_up_cards(self, just_used_cards):
         for card in just_used_cards:

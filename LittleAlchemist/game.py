@@ -23,8 +23,27 @@ class Game:
         self.hand_new_cards(self.players[1], ai_n_used)
 
     def battle(self, player_card, ai_card):
-        print(f"Player Card: {player_card.name.upper()}")
-        print(f"Enemy Card: {ai_card.name.upper()}")
+        print(f"\n----------------------------- Battle ---------------------------------")
+        self.players[0].show_chosen_card_stats(player_card)
+        self.players[1].show_chosen_card_stats(ai_card)
+
+        self.show_damages(player_card, ai_card)
+
+    def show_damages(self, player_card, ai_card):
+        player_damage_taken, ai_damage_taken = self.calculate_damage_taken(player_card, ai_card)
+        print(f"\nPlayer 1 damage taken: {player_damage_taken}")
+        print(f"Player 2 damage taken: {ai_damage_taken}")
+
+    def calculate_damage_taken(self, card1, card2):
+        card2_damage_taken = card1.attack - card2.defense 
+        if card2_damage_taken < 0:
+            card2_damage_taken = 0
+
+        card1_damage_taken = card2.attack - card1.defense
+        if card1_damage_taken < 0:
+            card1_damage_taken = 0
+        
+        return card1_damage_taken, card2_damage_taken
 
     def hand_new_cards(self, player, n_used):
         player.hand.append(player.deck[:n_used])
