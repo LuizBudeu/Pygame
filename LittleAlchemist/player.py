@@ -11,7 +11,7 @@ class Player:
         self.health = health
 
     def show_hand(self):
-        print(f"---------------------------- Player {self.num} Hand --------------------------------")
+        print(f"-------------------------- Player {self.num} Hand -----------------------------")
         for i, card in enumerate(self.hand):
             print(f"Card {i+1}: {card.name.upper()}")
             print(f"\tLevel: {card.level}\tAttack: {card.attack}\tDefense: {card.defense}\tCombo Type: {card.combo_type}\n")
