@@ -18,7 +18,7 @@ class Game:
             self.show_healths()
 
             player_card, player_n_used = self.players[0].play_card()
-            ai_card, ai_n_used = self.players[1].play_card()
+            ai_card, ai_n_used = self.players[1].play_card(show=False)
 
             self.battle(player_card, ai_card)
 
@@ -26,6 +26,7 @@ class Game:
             self.hand_new_cards(self.players[1], ai_n_used)
 
         self.show_winner()
+        a = input("\nPress ENTER to close program.")
 
     def battle(self, player_card, ai_card):
         print(f"\n----------------------------- Battle ---------------------------------")
