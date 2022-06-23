@@ -49,6 +49,7 @@ class Game:
         print(f"\n----------------------------------------------------------------------")
         for player in self.players:
             player.show_health()
+        print("")
 
     def show_damages(self, player_card, ai_card):
         player_damage_taken, ai_damage_taken = self.calculate_damage_taken(player_card, ai_card)
