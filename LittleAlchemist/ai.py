@@ -11,6 +11,7 @@ class Ai(Player):
         if show:
             self.show_hand()
 
+        best_combo_card = None
         all_possible_combos = self.get_all_possible_combos()
         if all_possible_combos:
             best_combo_card, card1, card2 = self.get_best_combo_card(all_possible_combos) 

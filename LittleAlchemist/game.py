@@ -14,13 +14,18 @@ class Game:
         self.game()
 
     def game(self):
-        player_card, player_n_used = self.players[0].play_card()
-        ai_card, ai_n_used = self.players[1].play_card()
+        while self.players[0].isAlive() and self.players[1].isAlive():
+            self.show_healths()
 
-        self.battle(player_card, ai_card)
+            player_card, player_n_used = self.players[0].play_card()
+            ai_card, ai_n_used = self.players[1].play_card()
 
-        self.hand_new_cards(self.players[0], player_n_used)
-        self.hand_new_cards(self.players[1], ai_n_used)
+            self.battle(player_card, ai_card)
+
+            self.hand_new_cards(self.players[0], player_n_used)
+            self.hand_new_cards(self.players[1], ai_n_used)
+
+        self.show_winner()
 
     def battle(self, player_card, ai_card):
         print(f"\n----------------------------- Battle ---------------------------------")
@@ -29,8 +34,26 @@ class Game:
 
         self.show_damages(player_card, ai_card)
 
+    def show_winner(self):
+        if not self.players[0].isAlive():
+            print(f"\nPlayer 2 wins!")
+        elif not self.players[1].isAlive():
+            print(f"\nPlayer 1 wins!")
+        elif not self.players[0].isAlive() and not self.players[1].isAlive():
+            print(f"\nDraw!")
+        else:
+            print("ERROR")
+        
+
+    def show_healths(self):
+        print(f"\n----------------------------------------------------------------------")
+        for player in self.players:
+            player.show_health()
+
     def show_damages(self, player_card, ai_card):
         player_damage_taken, ai_damage_taken = self.calculate_damage_taken(player_card, ai_card)
+        self.players[0].health -= player_damage_taken
+        self.players[1].health -= ai_damage_taken
         print(f"\nPlayer 1 damage taken: {player_damage_taken}")
         print(f"Player 2 damage taken: {ai_damage_taken}")
 
@@ -46,7 +69,9 @@ class Game:
         return card1_damage_taken, card2_damage_taken
 
     def hand_new_cards(self, player, n_used):
-        player.hand.append(player.deck[:n_used])
+        get_cards = player.deck[:n_used]
+        for card in get_cards:
+            player.hand.append(card)
         player.deck = player.deck[n_used:]
 
     def hand_players_cards(self):

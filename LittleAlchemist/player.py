@@ -11,7 +11,7 @@ class Player:
         self.health = health
 
     def show_hand(self):
-        print(f"-----------------------------Player {self.num} Hand---------------------------------")
+        print(f"---------------------------- Player {self.num} Hand --------------------------------")
         for i, card in enumerate(self.hand):
             print(f"Card {i+1}: {card.name.upper()}")
             print(f"\tLevel: {card.level}\tAttack: {card.attack}\tDefense: {card.defense}\tCombo Type: {card.combo_type}\n")
@@ -102,6 +102,12 @@ class Player:
             print("ERROR: Wrong input in combo decision.\n")
             return """
         return choice
+
+    def isAlive(self):
+        return self.health > 0
+
+    def show_health(self):
+        print(f"Player {self.num} health: {self.health}")
 
     def show_chosen_card_stats(self, chosen_card):
         print(f"Player {self.num} Card: {chosen_card.name.upper()} --- Attack: {chosen_card.attack}\tDefense: {chosen_card.defense}")
