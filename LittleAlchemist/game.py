@@ -1,12 +1,43 @@
 import csv
 import random 
+import pygame
+import sys
 from player import Player
 from card import Card
 from ai import Ai
+from settings import *
+from ui_utils import *
 
 
 class Game:
     def __init__(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode(WINDOW_SIZE)    
+        self.clock = pygame.time.Clock()
+        pygame.display.set_caption("Little Alchemist")
+
+        self.show_main_menu()
+
+        #self.init_game()
+    
+    def show_main_menu(self):
+        while True:
+            self.screen.fill(SELECTEDGREENISH)
+
+            write_text(self.screen, text="LITTLE ALCHEMIST", size=100, color=(196, 190, 0), center_pos=[WINDOW_SIZE[0]//2, 200])
+
+            playButton = Button(self.screen, text="PLAY", font_size=40, dim=(500, 100), center_pos=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2 + 100))
+            playButton.draw()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                
+            pygame.display.update()
+            self.clock.tick(60) 
+    
+    def init_game(self):
         self.players = [Player(1), Ai(2)]
         self.decks = [self.get_deck(), self.get_deck()]
         self.shuffle_decks()
@@ -44,7 +75,6 @@ class Game:
             print(f"\nDraw!")
         else:
             print("ERROR")
-        
 
     def show_healths(self):
         print(f"\n----------------------------------------------------------------------")
