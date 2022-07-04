@@ -31,10 +31,13 @@ class Button:
 
 
 
-def write_text(screen, text='Insert text here', size=50, color=(196, 190, 0), center_pos=[WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2]):
+def write_text(screen, text='Insert text here', size=50, color=(196, 190, 0), center_pos=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2), topleft_pos = None):
     font = pygame.font.Font("freesansbold.ttf", size)
     text_surf = font.render(text, True, color)
-    text_rect = text_surf.get_rect(center=center_pos)
+    if not topleft_pos:
+        text_rect = text_surf.get_rect(center=center_pos)
+    else:
+        text_rect = text_surf.get_rect(topleft=topleft_pos)
     screen.blit(text_surf, text_rect)
 
         

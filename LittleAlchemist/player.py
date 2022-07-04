@@ -1,5 +1,7 @@
+import pygame
 from settings import *
 from card import Card
+from ui_utils import *
 
 
 class Player:
@@ -9,12 +11,33 @@ class Player:
         self.hand = []
         self.used_cards = []
         self.health = health
+        self.total_health = health
 
-    def show_hand(self):
-        print(f"-------------------------- Player {self.num} Hand -----------------------------")
+    def show_hand(self, screen):
         for i, card in enumerate(self.hand):
-            print(f"Card {i+1}: {card.name.upper()}")
-            print(f"\tLevel: {card.level}\tAttack: {card.attack}\tDefense: {card.defense}\tCombo Type: {card.combo_type}\n")
+            if self.num == 1:
+                card.draw(screen, (80 + 260*(i), 620))
+            elif self.num == 2:
+                pass                                      # TODO
+    
+    def show_healthbar(self, screen):
+        if self.num == 1:
+            rect_pos = (0, 0)
+            health_text_pos = (175, 27)
+            player_text_pos = (10, 60)
+        elif self.num == 2:
+            rect_pos = (1090, 0)
+            health_text_pos = (1265, 27)
+            player_text_pos = (1320, 60)
+
+        red_rect = pygame.Rect(rect_pos[0], rect_pos[1], 350, 50)
+        green_rect = pygame.Rect(rect_pos[0], rect_pos[1], round(self.health/self.total_health*350), 50)
+        
+        pygame.draw.rect(screen, REDDISHBROWN, red_rect)
+        pygame.draw.rect(screen, GREEN, green_rect)
+        pygame.draw.rect(screen, BROWN, red_rect, 3)
+        write_text(screen, text=str(self.health), size=30, color=(0, 0, 0), center_pos=health_text_pos)
+        write_text(screen, f"Player {self.num}", size=25, color=(0, 0, 0), topleft_pos=player_text_pos)
 
     def play_card(self):
         decided = False

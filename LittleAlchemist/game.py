@@ -17,17 +17,36 @@ class Game:
         pygame.display.set_caption("Little Alchemist")
 
         self.show_main_menu()
-
-        #self.init_game()
     
     def show_main_menu(self):
         while True:
             self.screen.fill(SELECTEDGREENISH)
+            mx, my = get_mouse_pos()
 
             write_text(self.screen, text="LITTLE ALCHEMIST", size=100, color=(196, 190, 0), center_pos=[WINDOW_SIZE[0]//2, 200])
 
-            playButton = Button(self.screen, text="PLAY", font_size=40, dim=(500, 100), center_pos=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2 + 100))
-            playButton.draw()
+            play_button = Button(self.screen, text="PLAY", font_size=40, dim=(500, 100), center_pos=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2 + 100))
+            play_button.draw()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        if play_button.hovering(mx, my):
+                            self.show_game()
+                
+            pygame.display.update()
+            self.clock.tick(60) 
+
+    def show_game(self):
+        self.init_cards()
+
+        while True:
+            mx, my = get_mouse_pos()
+            self.screen_update()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -36,13 +55,18 @@ class Game:
                 
             pygame.display.update()
             self.clock.tick(60) 
-    
-    def init_game(self):
+
+    def screen_update(self):
+        self.screen.fill(SELECTEDGREENISH)
+        for player in self.players:
+            player.show_hand(self.screen)
+            player.show_healthbar(self.screen)
+
+    def init_cards(self):
         self.players = [Player(1), Ai(2)]
         self.decks = [self.get_deck(), self.get_deck()]
         self.shuffle_decks()
         self.hand_players_cards()
-        self.game()
 
     def game(self):
         while self.players[0].isAlive() and self.players[1].isAlive():

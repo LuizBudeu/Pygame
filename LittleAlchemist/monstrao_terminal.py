@@ -268,6 +268,7 @@ class Game:
             self.hand_new_cards(self.players[1], ai_n_used)
 
         self.show_winner()
+        a = input("\nPress ENTER to close program.")
 
     def battle(self, player_card, ai_card):
         print(f"\n----------------------------- Battle ---------------------------------")
