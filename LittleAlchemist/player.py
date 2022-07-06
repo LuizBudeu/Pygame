@@ -12,15 +12,27 @@ class Player:
         self.used_cards = []
         self.health = health
         self.total_health = health
+        self.selected_cards_index = []
 
     def show_hand(self, screen):
-        for i, card in enumerate(self.hand):
-            if self.num == 1:
-                card.draw(screen, (80 + 260*(i), 620))
-            elif self.num == 2:
-                pass                                      # TODO
-    
-    def show_healthbar(self, screen):
+        for card in self.hand:
+            i = self.get_index_from_card(card)
+            default_pos = player_1_default_cards_pos[i]
+
+            if i not in self.selected_cards_index:
+                card.draw(screen, player_1_default_cards_pos[i])
+            
+            else:
+                if i == self.selected_cards_index[0]:
+                    card.draw(screen, card.get_center_pos((WINDOW_SIZE[0]//2 - 200, WINDOW_SIZE[1]//2-180)))
+
+                elif i == self.selected_cards_index[1]:
+                    card.draw(screen, card.get_center_pos((WINDOW_SIZE[0]//2 + 200, WINDOW_SIZE[1]//2-180)))
+
+    def show_possible_combos(self, card): # TODO NEXT
+        pass
+
+    def show_healthbar(self, screen):  # TODO melhorar?
         if self.num == 1:
             rect_pos = (0, 0)
             health_text_pos = (175, 27)
@@ -38,6 +50,27 @@ class Player:
         pygame.draw.rect(screen, BROWN, red_rect, 3)
         write_text(screen, text=str(self.health), size=30, color=(0, 0, 0), center_pos=health_text_pos)
         write_text(screen, f"Player {self.num}", size=25, color=(0, 0, 0), topleft_pos=player_text_pos)
+
+    def select_card(self, card):
+        if len(self.selected_cards_index) < 2:
+            card.selected = True
+            self.selected_cards_index.append(self.hand.index(card))
+
+    def deselect_card(self, card):
+        i = self.get_index_from_card(card)
+        if len(self.selected_cards_index) == 2:
+            if not i == self.selected_cards_index[0]:
+                card.selected = False
+                self.selected_cards_index.remove(self.hand.index(card))
+        else:
+            card.selected = False
+            self.selected_cards_index.remove(self.hand.index(card))
+
+    def get_card_from_index(self, index):
+        return self.hand[index]
+
+    def get_index_from_card(self, card):
+        return self.hand.index(card)
 
     def play_card(self):
         decided = False

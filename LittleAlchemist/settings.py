@@ -44,3 +44,6 @@ def get_mouse_pos():
 all_cards_stats = get_all_cards_stats()
 all_combos = get_all_combos()
 
+player_1_default_cards_pos = {i: (80 + 260*(i), 620) for i in range(5)}
+player_2_default_cards_pos = {i: (425 + 110*(i), -50) for i in range(5)}
+

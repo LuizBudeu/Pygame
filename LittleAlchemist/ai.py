@@ -11,24 +11,34 @@ class Ai(Player):
         if show:
             self.show_hand()
 
+        # Tries to get best combo card
         best_combo_card = None
         all_possible_combos = self.get_all_possible_combos()
         if all_possible_combos:
             best_combo_card, card1, card2 = self.get_best_combo_card(all_possible_combos) 
         
+        # If combo_type 'f' card is better, play instead
         for card in self.hand: # Can be better
             if card.combo_type == 'f':
                 if self.card1_better_than_card2(card, best_combo_card):
                     self.use_up_cards([card])
                     return card, 1
 
+        # If not, play combo card
         if best_combo_card:
             self.use_up_cards([card1, card2])
             return best_combo_card, 2
 
+        # If there are no good choices, play random card
         random_card = random.choice(self.hand)
         self.use_up_cards([random_card])
         return random_card, 1
+
+    # Unused
+    def show_hand(self, screen):
+        for card in self.hand:
+            i = self.get_index_from_card(card)
+            card.draw(screen, player_2_default_cards_pos[i], (147, 180))
 
     def get_all_possible_combos(self):
         all_possible_combos = {}

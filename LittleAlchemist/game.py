@@ -48,18 +48,37 @@ class Game:
             mx, my = get_mouse_pos()
             self.screen_update()
 
+            back_menu_button = Button(self.screen, text="Back to menu", font_size=15, dim=(100, 50), topleft_pos=(50, 100))
+            back_menu_button.draw()
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        if back_menu_button.hovering(mx, my):
+                            self.show_main_menu()
+
+                        for card in self.players[0].hand:
+                            if card.hovering(mx, my):
+                                if not card.selected:
+                                    self.players[0].select_card(card)
+        
+                                else:
+                                    self.players[0].deselect_card(card)
+                                    
+                                print(self.players[0].selected_cards_index)
                 
             pygame.display.update()
             self.clock.tick(60) 
 
     def screen_update(self):
         self.screen.fill(SELECTEDGREENISH)
+        self.players[0].show_hand(self.screen)
+        
         for player in self.players:
-            player.show_hand(self.screen)
             player.show_healthbar(self.screen)
 
     def init_cards(self):

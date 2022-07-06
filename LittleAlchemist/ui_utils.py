@@ -3,7 +3,7 @@ from settings import *
 
 
 class Button:
-    def __init__(self, screen, text = "Insert text here", font_size = 20, dim = (200, 100), center_pos = (100, 50), bg_color = (154, 171, 170), bg_tocolor = (110, 122, 122)):
+    def __init__(self, screen, text = "Insert text here", font_size = 20, dim = (200, 100), center_pos = (100, 50), topleft_pos = None, bg_color = (154, 171, 170), bg_tocolor = (110, 122, 122)):
         self.font = pygame.font.Font("freesansbold.ttf", font_size)
 
         self.screen = screen
@@ -11,7 +11,10 @@ class Button:
         self.bg_color = bg_color
         self.bg_tocolor = bg_tocolor
 
-        self.rect = pygame.Rect(center_pos[0] - dim[0]//2, center_pos[1] - dim[1]//2, dim[0], dim[1])
+        if not topleft_pos:
+            self.rect = pygame.Rect(center_pos[0] - dim[0]//2, center_pos[1] - dim[1]//2, dim[0], dim[1])
+        else:
+            self.rect = pygame.Rect(topleft_pos[0], topleft_pos[1], dim[0], dim[1])
 
     def draw(self):
         mx, my = get_mouse_pos()
@@ -31,7 +34,7 @@ class Button:
 
 
 
-def write_text(screen, text='Insert text here', size=50, color=(196, 190, 0), center_pos=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2), topleft_pos = None):
+def write_text(screen, text='Insert text here', size=50, color=(0, 0, 0), center_pos=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2), topleft_pos = None):
     font = pygame.font.Font("freesansbold.ttf", size)
     text_surf = font.render(text, True, color)
     if not topleft_pos:
@@ -40,4 +43,10 @@ def write_text(screen, text='Insert text here', size=50, color=(196, 190, 0), ce
         text_rect = text_surf.get_rect(topleft=topleft_pos)
     screen.blit(text_surf, text_rect)
 
-        
+
+def draw_transparent_rect(screen):
+    s = pygame.Surface(WINDOW_SIZE)  # the size of your rect
+    s.set_alpha(128)                # alpha level
+    s.fill((255,255,255))           # this fills the entire surface
+    screen.blit(s, (0,0))    # (0,0) are the top-left coordinates
+
