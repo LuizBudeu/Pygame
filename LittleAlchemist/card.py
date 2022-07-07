@@ -4,7 +4,7 @@ from ui_utils import *
 
 
 class Card:
-    def __init__(self, name, level, combo_type, attack, defense):
+    def __init__(self, name, level, combo_type, attack, defense, tier):
         self.name = name
         self.level = int(level)
         self.combo_type = combo_type
@@ -12,23 +12,35 @@ class Card:
         self.defense = int(defense)
         self.selected = False
 
-    def draw(self, screen, topleft_pos, dim=(220, 270), color=YELLOW):
-        self.rect = pygame.Rect(topleft_pos, dim)
-        pygame.draw.rect(screen, color, self.rect)
+        tiers_colors = [LIGHTBROWN, LIGHTGRAY, YELLOW]
+        self.color = tiers_colors[int(tier)]
+
+    def draw(self, screen, center_pos=(100, 100), topleft_pos=None, dim=(220, 270)):
+        if topleft_pos:
+            self.rect = pygame.Rect(topleft_pos, dim)
+        else:
+            topleft_pos = self.get_topleft_pos(center_pos, dim)
+            self.rect = pygame.Rect(topleft_pos, dim)
+        
+        pygame.draw.rect(screen, self.color, self.rect)
         pygame.draw.rect(screen, BLACK, self.rect, 3)
 
-        write_text(screen, text=self.name.upper(), size=20, center_pos=(topleft_pos[0]+110, topleft_pos[1]+250))
-        write_text(screen, text=f"ATK: {self.attack}", size=16, center_pos=(topleft_pos[0]+90, topleft_pos[1]+20))
-        write_text(screen, text=f"DEF: {self.defense}", size=16, center_pos=(topleft_pos[0]+165, topleft_pos[1]+20))
-        write_text(screen, text=str(self.level), size=30, center_pos=(topleft_pos[0]+20, topleft_pos[1]+20))
-        write_text(screen, text=self.combo_type, size=20, center_pos=(topleft_pos[0]+20, topleft_pos[1]+60))
+        write_text(screen, text=self.name.upper(), font_size=19, center_pos=(topleft_pos[0]+110, topleft_pos[1]+250))
+        write_text(screen, text=f"ATK: {self.attack}", font_size=16, center_pos=(topleft_pos[0]+90, topleft_pos[1]+20))
+        write_text(screen, text=f"DEF: {self.defense}", font_size=16, center_pos=(topleft_pos[0]+165, topleft_pos[1]+20))
+        write_text(screen, text=str(self.level), font_size=30, center_pos=(topleft_pos[0]+20, topleft_pos[1]+20))
+        write_text(screen, text=self.combo_type, font_size=20, center_pos=(topleft_pos[0]+20, topleft_pos[1]+55))
 
-    def hovering(self, mx, my):
+    def hovering(self):
+        mx, my = get_mouse_pos()
         if self.rect.collidepoint(mx, my):
             return True
         return False
 
     def get_center_pos(self, topleft, dim=(220, 270)):
-        return (topleft[0]-dim[0]//2, topleft[1]-dim[1]//2)
+        return (topleft[0]+dim[0]//2, topleft[1]+dim[1]//2)
+
+    def get_topleft_pos(self, center_pos, dim=(220, 270)):
+        return (center_pos[0]-dim[0]//2, center_pos[1]-dim[1]//2)
 
     

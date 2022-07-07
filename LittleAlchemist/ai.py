@@ -1,3 +1,4 @@
+import random
 from player import Player
 from card import Card
 from settings import *
@@ -8,8 +9,9 @@ class Ai(Player):
         super().__init__(num)
         
     def play_card(self, show=True):
-        if show:
-            self.show_hand()
+        # TODO Fazer no futuro?
+        """ if show:
+            self.show_hand() """
 
         # Tries to get best combo card
         best_combo_card = None
@@ -21,17 +23,17 @@ class Ai(Player):
         for card in self.hand: # Can be better
             if card.combo_type == 'f':
                 if self.card1_better_than_card2(card, best_combo_card):
-                    self.use_up_cards([card])
+                    #self.use_up_cards([card])
                     return card, 1
 
         # If not, play combo card
         if best_combo_card:
-            self.use_up_cards([card1, card2])
+            #self.use_up_cards([card1, card2])
             return best_combo_card, 2
 
         # If there are no good choices, play random card
         random_card = random.choice(self.hand)
-        self.use_up_cards([random_card])
+        #self.use_up_cards([random_card])
         return random_card, 1
 
     # Unused
@@ -44,11 +46,11 @@ class Ai(Player):
         all_possible_combos = {}
         for card in self.hand: 
             if card.combo_type == 'c':
-                temp_hand = self.get_temp_hand(self.get_card_hand_index(card))
-                possible_combo_cards = self.get_possible_combo_cards(card, temp_hand)
+                temp_hand = self.get_temp_hand(self.get_card_from_index(self.get_card_hand_index(card)))
+                possible_combable_cards = self.get_possible_combable_cards(card, temp_hand)
 
                 card_combos = {}
-                for pcc in possible_combo_cards:
+                for pcc in possible_combable_cards:
                     card_combos[pcc] = self.get_combo_result_name(card, pcc)
                     all_possible_combos[card] = card_combos
 
@@ -60,7 +62,7 @@ class Ai(Player):
         card1, card2 = None, None
         for combo in all_possible_combos.values():
             for card_name in combo.values():
-                combo_card = self.get_card_from_name(card_name, 'C')
+                combo_card = self.create_card_from_name(card_name, 'C')
                 total = combo_card.attack + combo_card.defense
                 if total > best_total:
                     card1 = get_key(all_possible_combos, combo)

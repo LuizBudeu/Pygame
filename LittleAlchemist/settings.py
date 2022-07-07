@@ -19,6 +19,8 @@ RED = (255, 0, 0)
 YELLOW = (255, 247, 0)
 BLACK = (0, 0, 0)
 ORANGE= (255, 166, 0)
+LIGHTBROWN = (161, 90, 35)
+LIGHTGRAY = (161, 161, 161)
 
 def get_all_cards_stats():
     with open('cards/cards_stats.csv') as f:
@@ -28,7 +30,7 @@ def get_all_cards_stats():
         l = []
         for s in lines:
             l.append(s.split(','))
-        return {line[0]: {"level": line[1], "attack": line[2], "defense": line[3]} for line in l}
+        return {line[0]: {"level": line[1], "attack": line[2], "defense": line[3], "tier": line[4]} for line in l}
 
 def get_key(my_dict, val):
     for key, value in my_dict.items():
@@ -44,6 +46,6 @@ def get_mouse_pos():
 all_cards_stats = get_all_cards_stats()
 all_combos = get_all_combos()
 
-player_1_default_cards_pos = {i: (80 + 260*(i), 620) for i in range(5)}
+player_1_default_cards_pos = {i: (195 + 260*(i), 750) for i in range(5)}
 player_2_default_cards_pos = {i: (425 + 110*(i), -50) for i in range(5)}
 

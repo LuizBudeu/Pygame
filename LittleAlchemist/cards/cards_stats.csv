@@ -1,51 +1,51 @@
-name,level,attack,defense
-wolf,1,2,1
-human,1,3,2
-snake,1,2,1
-fire,1,3,0
-knight,1,3,4
-superhero,1,4,3
-wizard,1,5,1
-goblin,1,9,5
-pyromancer,1,10,6
-radiation,1,1,2
-horse,1,3,1
-golem,1,1,4
-earth,1,1,2
-magic,1,2,2
-firefox,1,7,4
-ash,1,0,1
-wyrm,1,3,2
-red knight,1,7,5
-war horse,1,5,8
-fireball,1,11,0
-sir lancelot,1,9,10
-battle mage,1,8,7
-werewolf,1,3,2
-medusa,1,9,5
-superman,1,9,9
-cowboy,1,8,6
-farmer,1,8,9
-voldemort,1,12,5
-anaconda,1,6,2
-rattlesnake,1,7,7
-cultist serpent,1,10,5
-beastman,1,8,8
-dire wolf,1,8,3
-radagons wolf,1,10,4
-avenger,1,8,9
-cavalry,1,7,7
-planet commander,1,8,11
-wolf pack,1,5,3
-wildfire,1,7,0
-the incinerator,1,7,3
-arch mage,1,12,7
-rockman,1,5,7
-gandalf,1,8,10
-geomancer,1,7,11
-pestilence horse,1,9,7
-unicorn,1,9,7
-fire golem,1,8,4
-metal golem,1,3,11
-arcane golem,1,10,5
-the ooze,1,12,5
+name,level,attack,defense,tier
+wolf,1,2,1,0
+human,1,3,2,1
+snake,1,2,1,0
+fire,1,3,0,0
+knight,1,3,4,1
+superhero,1,4,3,1
+wizard,1,5,1,1
+goblin,1,9,5,2
+pyromancer,1,10,6,2
+radiation,1,1,2,0
+horse,1,3,1,0
+golem,1,1,4,0
+earth,1,1,2,0
+magic,1,2,2,1
+firefox,1,7,4,1
+ash,1,0,1,0
+wyrm,1,3,2,0
+red knight,1,7,5,1
+war horse,1,5,8,1
+fireball,1,11,0,0
+sir lancelot,1,9,10,2
+battle mage,1,8,7,1
+werewolf,1,3,2,0
+medusa,1,9,5,2
+superman,1,9,9,2
+cowboy,1,8,6,2
+farmer,1,8,9,2
+voldemort,1,12,5,2
+anaconda,1,6,2,0
+rattlesnake,1,7,7,2
+cultist serpent,1,10,5,2
+beastman,1,8,8,2
+dire wolf,1,8,3,1
+radagons wolf,1,10,4,2
+avenger,1,8,9,2
+cavalry,1,7,7,2
+planet commander,1,8,11,2
+wolf pack,1,5,3,0
+wildfire,1,7,0,0
+the incinerator,1,7,3,1
+arch mage,1,12,7,2
+rockman,1,5,7,1
+gandalf,1,8,10,2
+geomancer,1,7,11,2
+pestilence horse,1,9,7,2
+unicorn,1,9,7,2
+fire golem,1,8,4,1
+metal golem,1,3,11,2
+arcane golem,1,10,5,2
+the ooze,1,12,5,2

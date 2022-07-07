@@ -2,6 +2,7 @@ import csv
 import random 
 import pygame
 import sys
+import time
 from player import Player
 from card import Card
 from ai import Ai
@@ -21,9 +22,8 @@ class Game:
     def show_main_menu(self):
         while True:
             self.screen.fill(SELECTEDGREENISH)
-            mx, my = get_mouse_pos()
 
-            write_text(self.screen, text="LITTLE ALCHEMIST", size=100, color=(196, 190, 0), center_pos=[WINDOW_SIZE[0]//2, 200])
+            write_text(self.screen, text="LITTLE ALCHEMIST", font_size=100, color=(196, 190, 0), center_pos=[WINDOW_SIZE[0]//2, 200])
 
             play_button = Button(self.screen, text="PLAY", font_size=40, dim=(500, 100), center_pos=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2 + 100))
             play_button.draw()
@@ -35,7 +35,7 @@ class Game:
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        if play_button.hovering(mx, my):
+                        if play_button.hovering():
                             self.show_game()
                 
             pygame.display.update()
@@ -43,13 +43,22 @@ class Game:
 
     def show_game(self):
         self.init_cards()
+        p1 = self.players[0]
+        ai = self.players[1]
+
+        confirm_button = None
+        player1_card = None
+        first_time = True
 
         while True:
-            mx, my = get_mouse_pos()
             self.screen_update()
 
-            back_menu_button = Button(self.screen, text="Back to menu", font_size=15, dim=(100, 50), topleft_pos=(50, 100))
+            back_menu_button = Button(self.screen, text="Back to menu", font_size=15, dim=(120, 50), center_pos=(WINDOW_SIZE[0]//2, 35))
             back_menu_button.draw()
+
+            if len(p1.selected_cards_index) >= 1:
+                confirm_button = Button(self.screen, text='Play', font_size=30,  dim=(130, 80), center_pos=((WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2+70)))
+                confirm_button.draw()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -58,21 +67,40 @@ class Game:
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        if back_menu_button.hovering(mx, my):
+                        if back_menu_button.hovering():
                             self.show_main_menu()
 
-                        for card in self.players[0].hand:
-                            if card.hovering(mx, my):
+                        for card in p1.hand:
+                            if card.hovering():
                                 if not card.selected:
-                                    self.players[0].select_card(card)
-        
+                                    p1.select_card(card)
                                 else:
-                                    self.players[0].deselect_card(card)
-                                    
-                                print(self.players[0].selected_cards_index)
+                                    p1.deselect_card(card)
+
+                        if confirm_button:
+                            if confirm_button.hovering():
+                                player1_card, player1_n_used = p1.play_card()
+                                p1.selected_cards_index = []
                 
+            if player1_card:    
+                if first_time:
+                    start = time.time()
+                    first_time = False
+
+                ai_card, n_used = ai.play_card()
+                self.show_battle(player1_card, ai_card)
+
+                stop = time.time()
+                if stop - start >= 1:   # Number of seconds
+                    player1_card = None
+
             pygame.display.update()
             self.clock.tick(60) 
+
+    def show_battle(self, player1_card, ai_card):
+        write_text(self.screen, text='vs', font_size=60, center_pos=(WINDOW_SIZE[0]//2, 285))
+        player1_card.draw(self.screen, center_pos=(500, 285))
+        ai_card.draw(self.screen, center_pos=(WINDOW_SIZE[0]//2+220, 285))
 
     def screen_update(self):
         self.screen.fill(SELECTEDGREENISH)
@@ -167,7 +195,7 @@ class Game:
             for i in range(int(starting_deck_card['number'])):
                 for card in cards_stats:
                     if starting_deck_card['name'] == card['name']:
-                        deck.append(Card(card['name'], int(card['level']), starting_deck_card['combo_type'], int(card['attack']), int(card['defense'])))
+                        deck.append(Card(card['name'], int(card['level']), starting_deck_card['combo_type'], int(card['attack']), int(card['defense']), int(card['tier'])))
         return deck
 
     def read_csv(self, file):

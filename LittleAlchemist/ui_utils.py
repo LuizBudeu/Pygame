@@ -18,7 +18,7 @@ class Button:
 
     def draw(self):
         mx, my = get_mouse_pos()
-        if self.hovering(mx, my):
+        if self.hovering():
             pygame.draw.rect(self.screen, self.bg_tocolor, self.rect)
         else:
             pygame.draw.rect(self.screen, self.bg_color, self.rect)
@@ -27,15 +27,16 @@ class Button:
         text_rect = text_surface.get_rect(center = self.rect.center)
         self.screen.blit(text_surface, text_rect)
     
-    def hovering(self, mx, my):
+    def hovering(self):
+        mx, my = get_mouse_pos()
         if self.rect.collidepoint(mx, my):
             return True
         return False
 
 
 
-def write_text(screen, text='Insert text here', size=50, color=(0, 0, 0), center_pos=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2), topleft_pos = None):
-    font = pygame.font.Font("freesansbold.ttf", size)
+def write_text(screen, text='Insert text here', font_size=50, color=(0, 0, 0), center_pos=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2), topleft_pos = None):
+    font = pygame.font.Font("freesansbold.ttf", font_size)
     text_surf = font.render(text, True, color)
     if not topleft_pos:
         text_rect = text_surf.get_rect(center=center_pos)
@@ -44,9 +45,13 @@ def write_text(screen, text='Insert text here', size=50, color=(0, 0, 0), center
     screen.blit(text_surf, text_rect)
 
 
-def draw_transparent_rect(screen):
-    s = pygame.Surface(WINDOW_SIZE)  # the size of your rect
+def draw_transparent_rect(screen, center_pos=(100, 100), topleft_pos=None, dim=WINDOW_SIZE, color=(255, 255, 255)):
+    s = pygame.Surface(dim)  # the size of your rect
     s.set_alpha(128)                # alpha level
-    s.fill((255,255,255))           # this fills the entire surface
-    screen.blit(s, (0,0))    # (0,0) are the top-left coordinates
+    s.fill(color)           # this fills the entire surface
+
+    if topleft_pos:
+        screen.blit(s, topleft_pos)  
+    else:
+        screen.blit(s, (center_pos[0]-dim[0]//2, center_pos[1]-dim[1]//2))
 
