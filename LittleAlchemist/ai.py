@@ -23,17 +23,17 @@ class Ai(Player):
         for card in self.hand: # Can be better
             if card.combo_type == 'f':
                 if self.card1_better_than_card2(card, best_combo_card):
-                    #self.use_up_cards([card])
+                    self.use_up_cards([card])
                     return card, 1
 
         # If not, play combo card
         if best_combo_card:
-            #self.use_up_cards([card1, card2])
+            self.use_up_cards([card1, card2])
             return best_combo_card, 2
 
         # If there are no good choices, play random card
         random_card = random.choice(self.hand)
-        #self.use_up_cards([random_card])
+        self.use_up_cards([random_card])
         return random_card, 1
 
     # Unused

@@ -82,26 +82,44 @@ class Game:
                                 player1_card, player1_n_used = p1.play_card()
                                 p1.selected_cards_index = []
                 
+            # Battle cards
             if player1_card:    
                 if first_time:
                     start = time.time()
                     first_time = False
+                    ai_card, ai_n_used = ai.play_card()
 
-                ai_card, n_used = ai.play_card()
                 self.show_battle(player1_card, ai_card)
 
                 stop = time.time()
-                if stop - start >= 1:   # Number of seconds
+                if stop - start >= 1.5:   # Number of seconds
+                    self.calculate_damages(player1_card, ai_card)
+                    self.hand_new_cards(self.players[0], player1_n_used)
+                    self.hand_new_cards(self.players[1], ai_n_used)
+
                     player1_card = None
+                    first_time = True
+                    confirm_button = None
+
+            if self.check_winner():
+                self.show_winner()
 
             pygame.display.update()
             self.clock.tick(60) 
 
-    def show_battle(self, player1_card, ai_card):
+    def check_winner(self):
+        if self.players[0].health <= 0:
+            return True
+        elif self.players[1].health <= 0:
+            return True
+        else:
+            return False
+
+    def show_battle(self, player1_card, ai_card): 
         write_text(self.screen, text='vs', font_size=60, center_pos=(WINDOW_SIZE[0]//2, 285))
         player1_card.draw(self.screen, center_pos=(500, 285))
         ai_card.draw(self.screen, center_pos=(WINDOW_SIZE[0]//2+220, 285))
-
+        
     def screen_update(self):
         self.screen.fill(SELECTEDGREENISH)
         self.players[0].show_hand(self.screen)
@@ -115,50 +133,38 @@ class Game:
         self.shuffle_decks()
         self.hand_players_cards()
 
-    def game(self):
-        while self.players[0].isAlive() and self.players[1].isAlive():
-            self.show_healths()
-
-            player_card, player_n_used = self.players[0].play_card()
-            ai_card, ai_n_used = self.players[1].play_card(show=False)
-
-            self.battle(player_card, ai_card)
-
-            self.hand_new_cards(self.players[0], player_n_used)
-            self.hand_new_cards(self.players[1], ai_n_used)
-
-        self.show_winner()
-        a = input("\nPress ENTER to close program.")
-
-    def battle(self, player_card, ai_card):
-        print(f"\n----------------------------- Battle ---------------------------------")
-        self.players[0].show_chosen_card_stats(player_card)
-        self.players[1].show_chosen_card_stats(ai_card)
-
-        self.show_damages(player_card, ai_card)
-
     def show_winner(self):
-        if not self.players[0].isAlive():
-            print(f"\nPlayer 2 wins!")
-        elif not self.players[1].isAlive():
-            print(f"\nPlayer 1 wins!")
-        elif not self.players[0].isAlive() and not self.players[1].isAlive():
-            print(f"\nDraw!")
+        if not self.players[0].is_alive():
+            winner = 'Player 2'
+        elif not self.players[1].is_alive():
+            winner = 'Player 1'
+        elif not self.players[0].is_alive() and not self.players[1].is_alive():
+            winner = 'Draw'
         else:
-            print("ERROR")
+            winner = 'Error'
 
-    def show_healths(self):
-        print(f"\n----------------------------------------------------------------------")
-        for player in self.players:
-            player.show_health()
-        print("")
+        while True:
+            write_text(self.screen, text=f"{winner} wins!", font_size=100, center_pos=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2+70))
+            back_menu_button = Button(self.screen, text="Back to menu", font_size=15, dim=(120, 50), center_pos=(WINDOW_SIZE[0]//2, 35))
+            back_menu_button.draw()
 
-    def show_damages(self, player_card, ai_card):
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        if back_menu_button.hovering():
+                            self.show_main_menu()
+
+            pygame.display.update()
+            self.clock.tick(60) 
+
+    def calculate_damages(self, player_card, ai_card):
         player_damage_taken, ai_damage_taken = self.calculate_damage_taken(player_card, ai_card)
         self.players[0].health -= player_damage_taken
         self.players[1].health -= ai_damage_taken
-        print(f"\nPlayer 1 damage taken: {player_damage_taken}")
-        print(f"Player 2 damage taken: {ai_damage_taken}")
 
     def calculate_damage_taken(self, card1, card2):
         card2_damage_taken = card1.attack - card2.defense 
