@@ -131,12 +131,6 @@ class Player:
     def is_alive(self):
         return self.health > 0
 
-    def show_health(self):
-        print(f"Player {self.num} health: {self.health}")
-
-    def show_chosen_card_stats(self, chosen_card):
-        print(f"Player {self.num} Card: {chosen_card.name.upper()} --- Attack: {chosen_card.attack}\tDefense: {chosen_card.defense}")
-
     def use_up_cards(self, just_used_cards):
         for card in just_used_cards:
             self.hand.remove(card)
@@ -164,9 +158,3 @@ class Player:
     
     def get_possible_combable_cards_indices(self, possible_combo_cards):
         return [str(self.get_card_hand_index(card)) for card in possible_combo_cards]
-
-    def display_card_with_stats(self, card_name):
-        return (f"{card_name.upper()} (Level: {all_cards_stats[card_name]['level']},  Attack: {all_cards_stats[card_name]['attack']}, Defense: {all_cards_stats[card_name]['defense']})")
-
-    def confirm_choice(self, card_name, combo_type):
-        return input(f"Play card: {self.display_card_with_stats(card_name)}, combo type: {combo_type} ? (y/n)\n")
