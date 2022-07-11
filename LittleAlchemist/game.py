@@ -16,6 +16,8 @@ class Game:
         self.screen = pygame.display.set_mode(WINDOW_SIZE)    
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("Little Alchemist")
+        icon = pygame.transform.scale(pygame.image.load("imgs/magic.png"), (64, 64))
+        pygame.display.set_icon(icon)
 
         self.show_main_menu()
     
