@@ -22,10 +22,24 @@ class Card:
             topleft_pos = self.get_topleft_pos(center_pos, dim)
             self.rect = pygame.Rect(topleft_pos, dim)
         
+        # Card
         pygame.draw.rect(screen, self.color, self.rect)
         pygame.draw.rect(screen, BLACK, self.rect, 3)
 
-        write_text(screen, text=self.name.upper(), font_size=19, center_pos=(topleft_pos[0]+110, topleft_pos[1]+250))
+        # Card drawing
+        pygame.draw.rect(screen, WHITE, (topleft_pos[0]+5, topleft_pos[1]+35, 210, 205))
+        pygame.draw.rect(screen, BLACK, (topleft_pos[0]+5, topleft_pos[1]+35, 210, 205), 1)
+
+        # Card attack
+        pygame.draw.rect(screen, ORANGE, (topleft_pos[0]+57, topleft_pos[1]+6, 70, 25))
+        pygame.draw.rect(screen, BLACK, (topleft_pos[0]+57, topleft_pos[1]+6, 70, 25), 1)
+
+        # Card defense
+        pygame.draw.rect(screen, LIGHTBLUE, (topleft_pos[0]+130, topleft_pos[1]+6, 70, 25))
+        pygame.draw.rect(screen, BLACK, (topleft_pos[0]+130, topleft_pos[1]+6, 70, 25), 1)
+
+        # Card stats
+        write_text(screen, text=self.name.upper(), font_size=19, center_pos=(topleft_pos[0]+110, topleft_pos[1]+255))
         write_text(screen, text=f"ATK: {self.attack}", font_size=16, center_pos=(topleft_pos[0]+90, topleft_pos[1]+20))
         write_text(screen, text=f"DEF: {self.defense}", font_size=16, center_pos=(topleft_pos[0]+165, topleft_pos[1]+20))
         write_text(screen, text=str(self.level), font_size=30, center_pos=(topleft_pos[0]+20, topleft_pos[1]+20))
