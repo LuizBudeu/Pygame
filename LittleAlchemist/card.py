@@ -4,13 +4,14 @@ from ui_utils import *
 
 
 class Card:
-    def __init__(self, name, level, combo_type, attack, defense, tier):
+    def __init__(self, name, level, combo_type, attack, defense, tier, img):
         self.name = name
         self.level = int(level)
         self.combo_type = combo_type
         self.attack = int(attack)
         self.defense = int(defense)
         self.selected = False
+        self.surf = img
 
         tiers_colors = [LIGHTBROWN, LIGHTGRAY, YELLOW]
         self.color = tiers_colors[int(tier)]
@@ -29,6 +30,7 @@ class Card:
         # Card drawing
         pygame.draw.rect(screen, WHITE, (topleft_pos[0]+5, topleft_pos[1]+35, 210, 205))
         pygame.draw.rect(screen, BLACK, (topleft_pos[0]+5, topleft_pos[1]+35, 210, 205), 1)
+        screen.blit(self.surf, (topleft_pos[0]+5, topleft_pos[1]+35))
 
         # Card attack
         pygame.draw.rect(screen, ORANGE, (topleft_pos[0]+57, topleft_pos[1]+6, 70, 25))

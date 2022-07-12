@@ -140,7 +140,7 @@ class Player:
         return self.hand.index(card)
 
     def create_card_from_name(self, card_name, combo_type): # TODO no futuro mudar o level?
-        return Card(card_name, 1, combo_type, all_cards_stats[card_name]['attack'], all_cards_stats[card_name]['defense'], all_cards_stats[card_name]['tier'])
+        return Card(card_name, 1, combo_type, all_cards_stats[card_name]['attack'], all_cards_stats[card_name]['defense'], all_cards_stats[card_name]['tier'], all_card_images[card_name])
 
     def get_combo_result_name(self, card1, card2):
         return all_combos[card1.name][card2.name]

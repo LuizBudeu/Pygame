@@ -45,6 +45,10 @@ def get_mouse_pos():
 
 all_cards_stats = get_all_cards_stats()
 all_combos = get_all_combos()
+all_card_images = {}
+CARD_NAMES = [k for k in all_cards_stats.keys()]
+for card in CARD_NAMES:
+    all_card_images[card] = pygame.image.load(f"imgs/{card}.png")
 
 player_1_default_cards_pos = {i: (195 + 260*(i), 750) for i in range(5)}
 player_2_default_cards_pos = {i: (425 + 110*(i), -50) for i in range(5)}

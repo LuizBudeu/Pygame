@@ -203,7 +203,7 @@ class Game:
             for i in range(int(starting_deck_card['number'])):
                 for card in cards_stats:
                     if starting_deck_card['name'] == card['name']:
-                        deck.append(Card(card['name'], int(card['level']), starting_deck_card['combo_type'], int(card['attack']), int(card['defense']), int(card['tier'])))
+                        deck.append(Card(card['name'], int(card['level']), starting_deck_card['combo_type'], int(card['attack']), int(card['defense']), int(card['tier']), all_card_images[card['name']]))
         return deck
 
     def read_csv(self, file):
