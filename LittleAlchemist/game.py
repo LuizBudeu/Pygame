@@ -136,17 +136,17 @@ class Game:
         self.hand_players_cards()
 
     def show_winner(self):
-        if not self.players[0].is_alive():
-            winner = 'Player 2'
-        elif not self.players[1].is_alive():
-            winner = 'Player 1'
-        elif not self.players[0].is_alive() and not self.players[1].is_alive():
+        if not self.players[0].is_alive() and not self.players[1].is_alive():
             winner = 'Draw'
+        elif not self.players[1].is_alive():
+            winner = 'Player 1 wins'
+        elif not self.players[0].is_alive():
+            winner = 'Player 2 wins'
         else:
             winner = 'Error'
 
         while True:
-            write_text(self.screen, text=f"{winner} wins!", font_size=100, center_pos=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2+70))
+            write_text(self.screen, text=winner, font_size=100, center_pos=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2+70))
             back_menu_button = Button(self.screen, text="Back to menu", font_size=15, dim=(120, 50), center_pos=(WINDOW_SIZE[0]//2, 35))
             back_menu_button.draw()
 
