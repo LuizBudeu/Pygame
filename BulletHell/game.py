@@ -100,4 +100,5 @@ class Game:
         for entity in self.entities:
             entity.update()
             entity.draw(self.screen)
+            entity.show_hitbox(self.screen)
 

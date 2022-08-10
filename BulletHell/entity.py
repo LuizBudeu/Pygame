@@ -1,4 +1,7 @@
 import pygame
+import math
+from utils.settings import *
+
 
 
 class Entity:
@@ -15,8 +18,13 @@ class Entity:
         self.vel_mod = 5
 
     def update(self):
-        self.x += self.velx
-        self.y += self.vely
+        if self.velx == 0 or self.vely == 0:
+            self.x += self.velx
+            self.y += self.vely
+        else:
+            self.x += self.velx / math.sqrt(2)
+            self.y += self.vely / math.sqrt(2)
+
         self.center = (self.x + self.width / 2, self.y + self.height / 2)
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
@@ -38,3 +46,6 @@ class Entity:
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
+
+    def show_hitbox(self, screen):
+        pygame.draw.rect(screen, WHITE, self.rect, 2)
