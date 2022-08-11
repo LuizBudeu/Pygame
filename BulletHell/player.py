@@ -1,4 +1,5 @@
 import pygame
+from pygame import mixer
 import math
 from utils.settings import *
 from utils.ui_utils import *
@@ -15,13 +16,17 @@ class Player(Entity):
         self.fire_rate = 250 # time in ms
         self.intangible = False
         self.dashing = False
+        self.dash_cooldown = 1000 # time in ms
+        self.can_dash = True
 
-    def shoot(self, entities):
+    def shoot(self, entities, bullet_sound):
         bullet = Bullet(self.center[0], self.center[1], 10, 10, LIGHTBLUE)
         angle = self.get_bullet_direction()
         bullet.velx = bullet.vel_mod * math.cos(angle)
         bullet.vely = bullet.vel_mod * math.sin(angle)
         entities.append(bullet)
+
+        bullet_sound.play()  
 
     def get_bullet_direction(self):
         mx, my = get_mouse_pos()
@@ -36,12 +41,19 @@ class Player(Entity):
         else:
             self.color = YELLOW
 
-    def dash(self):
+    def dash(self, dash_sound):
         if self.current_dash_frames > 0:
             self.set_intangible(True)
             direction = self.get_dash_direction()
-            self.x += self.dash_vel_mod * direction[0]
-            self.y += self.dash_vel_mod * direction[1]
+
+            if self.velx == 0 or self.vely == 0:
+                self.x += self.dash_vel_mod * direction[0]
+                self.y += self.dash_vel_mod * direction[1]
+            else:
+                self.x += self.dash_vel_mod * direction[0] / math.sqrt(2)
+                self.y += self.dash_vel_mod * direction[1] / math.sqrt(2)
+
+            dash_sound.play()
 
     def get_dash_direction(self):
         direction = [0, 0]
@@ -54,8 +66,5 @@ class Player(Entity):
         elif self.vely < 0:
             direction[1] = -1
         return direction
-
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect)
 
     
