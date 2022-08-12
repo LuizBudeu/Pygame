@@ -7,18 +7,18 @@ from bullet import Bullet
 
 
 class Enemy(Entity):
-    def __init__(self, x, y, width, height, color):
-        super().__init__(x, y, width, height, color)
+    def __init__(self, x, y, width, height, color, name=''):
+        super().__init__(x, y, width, height, color, name)
         self.vel_mod = 2
         self.fire_rate = 250
 
     def shoot(self, entities, player):
-        bullet = Bullet(self.center[0], self.center[1], 10, 10, REDDISHBROWN)
-        bullet.set_center_position((self.center[0], self.center[1]))
+        bullet = Bullet(self.rect.centerx, self.rect.centery, 10, 10, REDDISHBROWN)
+        bullet.set_center_position(self.rect.center)
         angle = self.get_bullet_direction(player)
         bullet.velx = bullet.vel_mod * math.cos(angle)
         bullet.vely = bullet.vel_mod * math.sin(angle)
-        entities.append(bullet)
+        entities[bullet.id] = bullet
 
     def get_bullet_direction(self, player):
         center = self.get_center_position()

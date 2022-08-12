@@ -7,8 +7,8 @@ from entity import Entity
 from bullet import Bullet
 
 class Player(Entity):
-    def __init__(self, x, y, width, height, color):
-        super().__init__(x, y, width, height, color)
+    def __init__(self, x, y, width, height, color, name=None):
+        super().__init__(x, y, width, height, color, name)
         self.vel_mod = 4
         self.dash_vel_mod = 8
         self.max_dash_frames = 15
@@ -20,11 +20,11 @@ class Player(Entity):
         self.can_dash = True
 
     def shoot(self, entities, bullet_sound):
-        bullet = Bullet(self.center[0], self.center[1], 10, 10, LIGHTBLUE)
+        bullet = Bullet(self.rect.centerx, self.rect.centery, 10, 10, LIGHTBLUE)
         angle = self.get_bullet_direction()
         bullet.velx = bullet.vel_mod * math.cos(angle)
         bullet.vely = bullet.vel_mod * math.sin(angle)
-        entities.append(bullet)
+        entities[bullet.id] = bullet
 
         bullet_sound.play()  
 

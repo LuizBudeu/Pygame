@@ -7,6 +7,7 @@ from utils.settings import *
 from utils.ui_utils import *
 from player import Player
 from enemy import Enemy
+from camera import Camera
 
 
 class Game:
@@ -19,7 +20,7 @@ class Game:
         pygame.display.set_caption("Bullet Hell")
 
         self.init_game()
-        self.game_loop(show_hitboxes=True)
+        self.game_loop(show_hitboxes=False)
 
     def game_loop(self, show_hitboxes=False):
         while True:
@@ -31,16 +32,16 @@ class Game:
                     sys.exit()
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT or event.key == ord('a'):
+                    if event.key == pygame.K_a:
                         self.player.velx += -self.player.vel_mod
 
-                    if event.key == pygame.K_RIGHT or event.key == ord('d'):
+                    if event.key == pygame.K_d:
                         self.player.velx += self.player.vel_mod
 
-                    if event.key == pygame.K_UP or event.key == ord('w'):
+                    if event.key == pygame.K_w:
                         self.player.vely += -self.player.vel_mod
 
-                    if event.key == pygame.K_DOWN or event.key == ord('s'):
+                    if event.key == pygame.K_s:
                         self.player.vely += self.player.vel_mod
                     
                     if event.key == pygame.K_m:
@@ -58,16 +59,16 @@ class Game:
                             pygame.time.set_timer(self.player_dash_ready, self.player.dash_cooldown)
 
                 if event.type == pygame.KEYUP:
-                    if (event.key == pygame.K_LEFT or event.key == ord('a')):
+                    if (event.key == pygame.K_a):
                         self.player.velx -= -self.player.vel_mod
 
-                    if event.key == pygame.K_RIGHT or event.key == ord('d'):
+                    if event.key == pygame.K_d:
                         self.player.velx -= self.player.vel_mod
 
-                    if (event.key == pygame.K_UP or event.key == ord('w')):
+                    if (event.key == pygame.K_w):
                         self.player.vely -= -self.player.vel_mod
 
-                    if event.key == pygame.K_DOWN or event.key == ord('s'):
+                    if event.key == pygame.K_s:
                         self.player.vely -= self.player.vel_mod
                         
                 if event.type == self.player_bullet_ready:
@@ -86,15 +87,17 @@ class Game:
             self.clock.tick(120)
 
     def init_game(self):
-        self.player = Player(WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2, 35, 35, YELLOW)
+        self.camera = Camera(self.screen)
+
+        self.player = Player(WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2, 35, 35, YELLOW, 'player')
         self.player.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2))
 
-        self.enemy = Enemy(WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2, 35, 35, RED)
+        self.enemy = Enemy(WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2, 35, 35, RED, 'enemy')
         self.enemy.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2 - 300))
 
-        self.entities = []
-        self.entities.append(self.player)
-        self.entities.append(self.enemy)
+        self.entities = {}
+        self.add_entity(self.player)
+        self.add_entity(self.enemy)
 
         self.muted = False
 
@@ -102,6 +105,18 @@ class Game:
         self.load_sounds()
         self.load_images()
         self.play_background_music() 
+
+    def screen_update(self, show_hitboxes):
+        self.handle_player()
+        
+        for entity in self.entities.values():
+            entity.update()
+            if show_hitboxes:
+                entity.show_hitbox(self.screen)
+            
+        self.camera.draw(self.entities)
+
+        self.draw_ui()
 
     def init_time_events(self):
         self.player_bullet_ready = pygame.USEREVENT + 0
@@ -159,17 +174,6 @@ class Game:
             self.player.set_intangible(False)
             self.player.dashing = False
             self.player.current_dash_frames = self.player.max_dash_frames
-
-    def screen_update(self, show_hitboxes):
-        self.handle_player()
-        
-        for entity in self.entities:
-            entity.update()
-            entity.draw(self.screen)
-            if show_hitboxes:
-                entity.show_hitbox(self.screen)
-
-        self.draw_ui()
      
     def draw_ui(self):
         self.draw_sound_icon()
@@ -180,3 +184,5 @@ class Game:
         else:
             self.screen.blit(self.images['muted_icon'], (WINDOW_SIZE[0] - 40, WINDOW_SIZE[1] - 40))
     
+    def add_entity(self, entity):
+        self.entities[entity.id] = entity
