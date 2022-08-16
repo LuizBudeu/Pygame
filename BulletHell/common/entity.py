@@ -1,21 +1,30 @@
 import pygame
 import math
-from utils.settings import *
+from .settings import *
 
 
 
 class Entity:
-    def __init__(self, x, y, width, height, color):
+    unique_id = 0
+
+    def __init__(self, x, y, width, height, color, name="unnamed_entity", max_health=None):
+        self.name = name
+        self.id = Entity.unique_id
+        Entity.unique_id += 1
+
         self.x = x
         self.y = y
         self.width = width
         self.height = height
-        self.center = (x + self.width / 2, y + self.height / 2)
+        self.dimension = (self.width, self.height)
         self.color = color
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.velx = 0
         self.vely = 0
-        self.vel_mod = 5
+        self.vel_mod = 0
+        self.lifebar = None
+        self.max_health = max_health
+        self.health = max_health
 
     def update(self):
         if self.velx == 0 or self.vely == 0:
@@ -25,7 +34,6 @@ class Entity:
             self.x += self.velx / math.sqrt(2)
             self.y += self.vely / math.sqrt(2)
 
-        self.center = (self.x + self.width / 2, self.y + self.height / 2)
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
     def set_center_position(self, center):
@@ -34,18 +42,32 @@ class Entity:
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
     def get_center_position(self):
-        return self.x + self.width / 2, self.y + self.height / 2
+        return self.rect.center
 
     def get_topleft_position(self):
-        return self.x, self.y
+        return self.rect.topleft
 
     def set_topleft_position(self, topleft):
-        self.x = topleft[0]
-        self.y = topleft[1]
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        self.rect.topleft = topleft
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
 
     def show_hitbox(self, screen):
         pygame.draw.rect(screen, WHITE, self.rect, 2)
+
+    def hit(self, other_rect):
+        if self.rect.colliderect(other_rect):
+            return True
+        return False
+
+    def out_of_bounds(self):
+        if self.x + self.width + 10 < 0 or self.x > WINDOW_SIZE[0] + 10:
+            return True
+        elif self.y + self.height + 10 < 0 or self.y > WINDOW_SIZE[1] + 10:
+            return True
+        else:
+            return False
+
+    def take_damage(self, damage):
+        self.health -= damage

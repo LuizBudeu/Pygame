@@ -33,8 +33,6 @@ class Button:
             return True
         return False
 
-
-
 def write_text(screen, text='Insert text here', font_size=50, color=(0, 0, 0), center_pos=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2), topleft_pos = None):
     font = pygame.font.Font("freesansbold.ttf", font_size)
     text_surf = font.render(text, True, color)
@@ -43,7 +41,6 @@ def write_text(screen, text='Insert text here', font_size=50, color=(0, 0, 0), c
     else:
         text_rect = text_surf.get_rect(topleft=topleft_pos)
     screen.blit(text_surf, text_rect)
-
 
 def draw_transparent_rect(screen, center_pos=(100, 100), topleft_pos=None, dim=WINDOW_SIZE, color=(255, 255, 255)):
     s = pygame.Surface(dim)  # the size of your rect
@@ -54,7 +51,6 @@ def draw_transparent_rect(screen, center_pos=(100, 100), topleft_pos=None, dim=W
         screen.blit(s, topleft_pos)  
     else:
         screen.blit(s, (center_pos[0]-dim[0]//2, center_pos[1]-dim[1]//2))
-
 
 def get_mouse_pos():
     return pygame.mouse.get_pos()

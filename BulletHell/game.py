@@ -3,8 +3,8 @@ import pygame
 from pygame import mixer
 import sys
 import time
-from utils.settings import *
-from utils.ui_utils import *
+from common.settings import *
+from common.ui_utils import *
 from player import Player
 from enemy import Enemy
 
@@ -19,9 +19,9 @@ class Game:
         pygame.display.set_caption("Bullet Hell")
 
         self.init_game()
-        self.game_loop(show_hitboxes=True)
+        self.game_loop()
 
-    def game_loop(self, show_hitboxes=False):
+    def game_loop(self):
         while True:
             self.screen.fill(NIGHTBLUE)
 
@@ -80,21 +80,21 @@ class Game:
                     self.player.can_dash = True
                     pygame.time.set_timer(self.player_dash_ready, 0)
 
-            self.screen_update(show_hitboxes)
+            self.screen_update()
 
             pygame.display.update()
             self.clock.tick(120)
 
     def init_game(self):
-        self.player = Player(WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2, 35, 35, YELLOW)
+        self.player = Player(WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2, 35, 35, YELLOW, 'player', max_health=100)
         self.player.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2))
 
-        self.enemy = Enemy(WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2, 35, 35, RED)
+        self.enemy = Enemy(WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2, 35, 35, RED, 'enemy', max_health=100)
         self.enemy.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2 - 300))
 
-        self.entities = []
-        self.entities.append(self.player)
-        self.entities.append(self.enemy)
+        self.entities = {}
+        self.add_entity(self.player)
+        self.add_entity(self.enemy)
 
         self.muted = False
 
@@ -112,6 +112,62 @@ class Game:
 
         self.player_dash_ready = pygame.USEREVENT + 2
         pygame.time.set_timer(self.player_dash_ready, 0)
+
+    def screen_update(self):
+        for entity in self.entities.values():
+            entity.update()
+            entity.draw(self.screen)
+
+        self.handle_player()
+        self.handle_enemies()
+        self.handle_bullets()
+        #print(self.player.health)
+
+        self.draw_ui()
+        self.cleanup()
+
+    def handle_player(self):
+        # Dash handling
+        if self.player.dashing:
+            self.player.dash(self.dash_sound)
+            self.player.current_dash_frames -= 1
+        if self.player.current_dash_frames <= 0:
+            self.player.set_intangible(False)
+            self.player.dashing = False
+            self.player.current_dash_frames = self.player.max_dash_frames
+
+        # Hit detection
+        for bullet in self.get_entities_from_name('bullet'):
+            if self.player.hit(bullet) and not self.player.intangible:
+                print("dano")
+                self.player.take_damage(25)
+
+        # Visual effects
+        self.player.show_lifebars(self.screen)
+        self.player.show_hitbox(self.screen)
+
+    def handle_enemies(self):
+        for entity in self.entities.values():
+            if entity.name == 'enemy':
+                entity.show_lifebars(self.screen)
+                entity.show_hitbox(self.screen)
+
+    def handle_bullets(self):
+        for entity in self.entities.values():
+            if entity.name == 'bullet':
+                entity.show_hitbox(self.screen)
+
+                if entity.out_of_bounds():
+                    entity.name = 'to_be_deleted'
+     
+    def draw_ui(self):
+        self.draw_sound_icon()
+
+    def draw_sound_icon(self):
+        if not self.muted:
+            self.screen.blit(self.images['unmuted_icon'], (WINDOW_SIZE[0] - 40, WINDOW_SIZE[1] - 40))
+        else:
+            self.screen.blit(self.images['muted_icon'], (WINDOW_SIZE[0] - 40, WINDOW_SIZE[1] - 40))
 
     def load_images(self):
         unmuted_icon_surf = pygame.image.load("assets/images/unmuted_icon.png").convert_alpha()
@@ -150,33 +206,14 @@ class Game:
         for sound in self.sounds:
             mixer.Sound.set_volume(sound, self.sounds[sound]['volume'])
 
-    def handle_player(self):
-        if self.player.dashing:
-            self.player.dash(self.dash_sound)
-            self.player.current_dash_frames -= 1
-            
-        if self.player.current_dash_frames <= 0:
-            self.player.set_intangible(False)
-            self.player.dashing = False
-            self.player.current_dash_frames = self.player.max_dash_frames
+    def add_entity(self, entity):
+        self.entities[entity.id] = entity
 
-    def screen_update(self, show_hitboxes):
-        self.handle_player()
-        
-        for entity in self.entities:
-            entity.update()
-            entity.draw(self.screen)
-            if show_hitboxes:
-                entity.show_hitbox(self.screen)
+    def cleanup(self):
+        for entity in self.entities.values():
+            if entity.name == 'to_be_deleted':
+                del self.entities[entity.id]
+                break
 
-        self.draw_ui()
-     
-    def draw_ui(self):
-        self.draw_sound_icon()
-
-    def draw_sound_icon(self):
-        if not self.muted:
-            self.screen.blit(self.images['unmuted_icon'], (WINDOW_SIZE[0] - 40, WINDOW_SIZE[1] - 40))
-        else:
-            self.screen.blit(self.images['muted_icon'], (WINDOW_SIZE[0] - 40, WINDOW_SIZE[1] - 40))
-    
+    def get_entities_from_name(self, name):
+        return [entity for entity in self.entities.values() if entity.name == name]

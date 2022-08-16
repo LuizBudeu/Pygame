@@ -1,14 +1,16 @@
 import pygame
 from pygame import mixer
 import math
-from utils.settings import *
-from utils.ui_utils import *
-from entity import Entity
+from common.settings import *
+from common.ui_utils import *
+from common.entity import Entity
 from bullet import Bullet
+from lifebar import Lifebar
+
 
 class Player(Entity):
-    def __init__(self, x, y, width, height, color):
-        super().__init__(x, y, width, height, color)
+    def __init__(self, x, y, width, height, color, name, max_health):
+        super().__init__(x, y, width, height, color, name, max_health)
         self.vel_mod = 4
         self.dash_vel_mod = 8
         self.max_dash_frames = 15
@@ -20,11 +22,11 @@ class Player(Entity):
         self.can_dash = True
 
     def shoot(self, entities, bullet_sound):
-        bullet = Bullet(self.center[0], self.center[1], 10, 10, LIGHTBLUE)
+        bullet = Bullet(self.rect.centerx, self.rect.centery, 10, 10, LIGHTBLUE, 'bullet')
         angle = self.get_bullet_direction()
         bullet.velx = bullet.vel_mod * math.cos(angle)
         bullet.vely = bullet.vel_mod * math.sin(angle)
-        entities.append(bullet)
+        entities[bullet.id] = bullet
 
         bullet_sound.play()  
 
@@ -67,4 +69,8 @@ class Player(Entity):
             direction[1] = -1
         return direction
 
-    
+    def show_lifebars(self, screen):
+        self.lifebar = Lifebar(self.x, self.y, 50, 10, max_health=self.max_health)
+        self.lifebar.take_damage(self.max_health - self.health)
+        self.lifebar.set_center_position((self.rect.centerx, self.rect.centery - 30))
+        self.lifebar.draw(screen)
