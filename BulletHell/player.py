@@ -5,7 +5,6 @@ from common.settings import *
 from common.ui_utils import *
 from common.entity import Entity
 from bullet import Bullet
-from lifebar import Lifebar
 
 
 class Player(Entity):
@@ -20,15 +19,18 @@ class Player(Entity):
         self.dashing = False
         self.dash_cooldown = 1000 # time in ms
         self.can_dash = True
+        self.max_hit_frames = 15
+        self.current_hit_frames = self.max_hit_frames
+        self.taken_damage = False
 
     def shoot(self, entities, bullet_sound):
-        bullet = Bullet(self.rect.centerx, self.rect.centery, 10, 10, LIGHTBLUE, 'bullet')
-        angle = self.get_bullet_direction()
-        bullet.velx = bullet.vel_mod * math.cos(angle)
-        bullet.vely = bullet.vel_mod * math.sin(angle)
-        entities[bullet.id] = bullet
-
-        bullet_sound.play()  
+        if self.alive():
+            bullet = Bullet(self.rect.centerx, self.rect.centery, 10, 10, LIGHTBLUE, 'player_bullet')
+            angle = self.get_bullet_direction()
+            bullet.velx = bullet.vel_mod * math.cos(angle)
+            bullet.vely = bullet.vel_mod * math.sin(angle)
+            entities[bullet.id] = bullet
+            bullet_sound.play()  
 
     def get_bullet_direction(self):
         mx, my = get_mouse_pos()
@@ -39,9 +41,16 @@ class Player(Entity):
     def set_intangible(self, intangible):
         self.intangible = intangible
         if intangible:
-            self.color = LIGHTYELLOW
+            self.color = WHITE
         else:
             self.color = YELLOW
+
+    def take_damage(self, damage):
+        self.taken_damage = True
+        self.set_intangible(True)
+        self.health -= damage
+        if self.health <= 0:
+            self.health = 0
 
     def dash(self, dash_sound):
         if self.current_dash_frames > 0:
@@ -69,8 +78,3 @@ class Player(Entity):
             direction[1] = -1
         return direction
 
-    def show_lifebars(self, screen):
-        self.lifebar = Lifebar(self.x, self.y, 50, 10, max_health=self.max_health)
-        self.lifebar.take_damage(self.max_health - self.health)
-        self.lifebar.set_center_position((self.rect.centerx, self.rect.centery - 30))
-        self.lifebar.draw(screen)

@@ -118,10 +118,12 @@ class Game:
             entity.update()
             entity.draw(self.screen)
 
+            if not entity.alive():
+                entity.name = 'to_be_deleted'
+
         self.handle_player()
         self.handle_enemies()
         self.handle_bullets()
-        #print(self.player.health)
 
         self.draw_ui()
         self.cleanup()
@@ -137,25 +139,45 @@ class Game:
             self.player.current_dash_frames = self.player.max_dash_frames
 
         # Hit detection
-        for bullet in self.get_entities_from_name('bullet'):
+        for bullet in self.get_entities_from_name('enemy_bullet'):
             if self.player.hit(bullet) and not self.player.intangible:
-                print("dano")
                 self.player.take_damage(25)
+        
+        # Hit frames handling
+        if self.player.current_hit_frames > 0 and self.player.taken_damage:
+            self.player.current_hit_frames -= 1
+        if self.player.current_hit_frames <= 0:
+            self.player.set_intangible(False)
+            self.player.taken_damage = False
+            self.player.current_hit_frames = self.player.max_hit_frames
 
         # Visual effects
         self.player.show_lifebars(self.screen)
-        self.player.show_hitbox(self.screen)
+        #self.player.show_hitbox(self.screen)
 
     def handle_enemies(self):
-        for entity in self.entities.values():
-            if entity.name == 'enemy':
-                entity.show_lifebars(self.screen)
-                entity.show_hitbox(self.screen)
+        for enemy in self.get_entities_from_name('enemy'):
+                # Hit detection
+                for bullet in self.get_entities_from_name('player_bullet'):
+                    if enemy.hit(bullet) and not enemy.intangible:
+                        enemy.take_damage(25)
+                
+                # Hit frames handling
+                if enemy.current_hit_frames > 0 and enemy.taken_damage:
+                    enemy.current_hit_frames -= 1
+                if enemy.current_hit_frames <= 0:
+                    enemy.set_intangible(False)
+                    enemy.taken_damage = False
+                    enemy.current_hit_frames = enemy.max_hit_frames
+
+                # Visual effects
+                enemy.show_lifebars(self.screen)
+                #enemy.show_hitbox(self.screen)
 
     def handle_bullets(self):
         for entity in self.entities.values():
-            if entity.name == 'bullet':
-                entity.show_hitbox(self.screen)
+            if 'bullet' in entity.name:
+                #entity.show_hitbox(self.screen)
 
                 if entity.out_of_bounds():
                     entity.name = 'to_be_deleted'

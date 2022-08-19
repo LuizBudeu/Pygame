@@ -1,13 +1,14 @@
 import pygame
 import math
 from .settings import *
+from lifebar import Lifebar
 
 
 
 class Entity:
     unique_id = 0
 
-    def __init__(self, x, y, width, height, color, name="unnamed_entity", max_health=None):
+    def __init__(self, x, y, width, height, color, name="unnamed_entity", max_health=999999):
         self.name = name
         self.id = Entity.unique_id
         Entity.unique_id += 1
@@ -70,4 +71,18 @@ class Entity:
             return False
 
     def take_damage(self, damage):
-        self.health -= damage
+        self.health -= damage 
+        if self.health <= 0:
+            self.health = 0
+
+    def alive(self):
+        if self.health <= 0:
+            return False
+        else:
+            return True
+
+    def show_lifebars(self, screen):
+        self.lifebar = Lifebar(self.x, self.y, 40, 6, self.max_health)
+        self.lifebar.take_damage(self.max_health - self.health)  
+        self.lifebar.set_center_position((self.rect.centerx, self.rect.centery - 30))
+        self.lifebar.draw(screen)

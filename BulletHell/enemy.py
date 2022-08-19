@@ -4,7 +4,6 @@ from common.settings import *
 from common.ui_utils import *
 from common.entity import Entity
 from bullet import Bullet
-from lifebar import Lifebar
 
 
 class Enemy(Entity):
@@ -12,14 +11,19 @@ class Enemy(Entity):
         super().__init__(x, y, width, height, color, name, max_health)
         self.vel_mod = 2
         self.fire_rate = 250
+        self.intangible = False
+        self.taken_damage = False
+        self.max_hit_frames = 15
+        self.current_hit_frames = self.max_hit_frames
 
     def shoot(self, entities, player):
-        bullet = Bullet(self.rect.centerx, self.rect.centery, 10, 10, REDDISHBROWN, 'bullet')
-        bullet.set_center_position((self.rect.centerx, self.rect.centery))
-        angle = self.get_bullet_direction(player)
-        bullet.velx = bullet.vel_mod * math.cos(angle)
-        bullet.vely = bullet.vel_mod * math.sin(angle)
-        entities[bullet.id] = bullet
+        if self.alive():
+            bullet = Bullet(self.rect.centerx, self.rect.centery, 10, 10, REDDISHBROWN, 'enemy_bullet')
+            bullet.set_center_position((self.rect.centerx, self.rect.centery))
+            angle = self.get_bullet_direction(player)
+            bullet.velx = bullet.vel_mod * math.cos(angle)
+            bullet.vely = bullet.vel_mod * math.sin(angle)
+            entities[bullet.id] = bullet
 
     def get_bullet_direction(self, player):
         center = self.get_center_position()
@@ -27,10 +31,19 @@ class Enemy(Entity):
         angle = math.atan2(player_center[1] - center[1], player_center[0] - center[0])
         return angle
 
-    def show_lifebars(self, screen):
-        self.lifebar = Lifebar(self.x, self.y, 50, 10, max_health=self.max_health)
-        self.lifebar.take_damage(self.max_health - self.health)
-        self.lifebar.set_center_position((self.rect.centerx, self.rect.centery - 30))
-        self.lifebar.draw(screen)
+    def take_damage(self, damage):
+        self.taken_damage = True
+        self.set_intangible(True)
+        self.health -= damage
+        if self.health <= 0:
+            self.health = 0
+
+    def set_intangible(self, intangible):
+        self.intangible = intangible
+        if intangible:
+            self.color = WHITE
+        else:
+            self.color = RED
+
 
     

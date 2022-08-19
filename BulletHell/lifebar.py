@@ -3,7 +3,7 @@ from common.settings import *
 
 
 class Lifebar:
-    def __init__(self, x, y, width, height, color1=GREEN, color2=RED, max_health=10000):
+    def __init__(self, x, y, width, height, max_health, color1=GREEN, color2=RED):
         self.x = x
         self.y = y
         self.width = width
@@ -19,11 +19,18 @@ class Lifebar:
         self.grect = pygame.Rect(x, y, width, height)
 
     def draw(self, screen):
+        self.update()
         pygame.draw.rect(screen, self.color2, self.rrect)
         pygame.draw.rect(screen, self.color1, self.grect)
 
+    def update(self):
+        green_width = self.health / self.max_health * self.width
+        self.grect = self.grect = pygame.Rect(self.x, self.y, green_width, self.height)
+
     def take_damage(self, damage):
-        self.grect.width -= damage / self.max_health
+        self.health -= damage 
+        if self.health <= 0:
+            self.health = 0
 
     def set_center_position(self, center):
         self.x = center[0] - self.width / 2
