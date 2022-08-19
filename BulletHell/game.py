@@ -92,8 +92,8 @@ class Game:
             self.clock.tick(120)
 
     def init_game(self):
-        self.player = Player(WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2, 35, 35, YELLOW, 'player', max_health=100)
-        self.player.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2))
+        self.player = Player(0, 0, 35, 35, YELLOW, 'player', max_health=100)
+        self.player.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2+300))
 
         enemies = [Enemy(0, 0, 35, 35, RED, 'enemy', max_health=100) for i in range(3)]
 
@@ -116,7 +116,7 @@ class Game:
 
         self.enemy_bullet_ready = pygame.USEREVENT + 1
 
-        pygame.time.set_timer(self.enemy_bullet_ready, 250) # TODO?
+        pygame.time.set_timer(self.enemy_bullet_ready, 250) # TODO cada inimigo com próprio firerate?
 
         self.player_dash_ready = pygame.USEREVENT + 2
         pygame.time.set_timer(self.player_dash_ready, 0)
@@ -134,6 +134,8 @@ class Game:
         self.cleanup()
 
     def handle_player(self):
+        # Out of bounds handling
+        self.player.limit_out_of_bounds()
 
         # Dash handling
         if self.player.dashing:

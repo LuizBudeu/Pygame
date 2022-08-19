@@ -86,3 +86,12 @@ class Player(Entity):
         self.controls_enabled = False
         self.intangible = True
 
+    def limit_out_of_bounds(self):
+        if self.x < 0:
+            self.x = 0
+        elif self.x > WINDOW_SIZE[0] - self.width:
+            self.x = WINDOW_SIZE[0] - self.width
+        if self.y < 0:
+            self.y = 0
+        elif self.y > WINDOW_SIZE[1] - self.height:
+            self.y = WINDOW_SIZE[1] - self.height
