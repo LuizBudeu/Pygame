@@ -52,6 +52,9 @@ class Game:
                             self.unmute_all_sounds()
                             self.muted = False
 
+                    if event.key == pygame.K_r:
+                        self.init_game()
+
                     if event.key == pygame.K_SPACE:
                         if self.player.can_dash:
                             self.player.dashing = True
@@ -129,9 +132,9 @@ class Game:
 
     def handle_player(self):
         # Death handling
-        if not self.player.alive() and not self.player.intangible:
+        """ if not self.player.alive() and not self.player.intangible:
             self.sounds['explosion']['sound'].play()
-            self.player.die()
+            self.player.die() """
 
         # Dash handling
         if self.player.dashing:
@@ -145,7 +148,7 @@ class Game:
         # Hit detection
         for bullet in self.get_entities_from_name('enemy_bullet'):
             if self.player.hit(bullet) and not self.player.intangible:
-                self.player.take_damage(25, self.sounds['hit']['sound'])
+                self.player.take_damage(25, self.sounds['player_hit']['sound'], self.sounds['explosion']['sound'])
         
         # Hit frames handling
         if self.player.current_hit_frames > 0 and self.player.taken_damage:
@@ -162,14 +165,14 @@ class Game:
     def handle_enemies(self):
         for enemy in self.get_entities_from_name('enemy'):
                 # Death handling
-                if not enemy.alive():
+                """ if not enemy.alive():
                     self.sounds['explosion']['sound'].play()
-                    enemy.name = 'to_be_deleted'
+                    enemy.name = 'to_be_deleted' """
 
                 # Hit detection
                 for bullet in self.get_entities_from_name('player_bullet'):
                     if enemy.hit(bullet) and not enemy.intangible:
-                        enemy.take_damage(25)
+                        enemy.take_damage(25, self.sounds['enemy_hit']['sound'], self.sounds['explosion']['sound'])
                 
                 # Hit frames handling
                 if enemy.current_hit_frames > 0 and enemy.taken_damage:
@@ -216,14 +219,16 @@ class Game:
 
         # Sound effects
         bullet_sound = mixer.Sound("assets/sound/effects/laser.wav")  
-        dash_sound = mixer.Sound("assets/sound/effects/dash2.wav")
-        hit_sound = mixer.Sound("assets/sound/effects/hit.wav")
+        dash_sound = mixer.Sound("assets/sound/effects/dash.wav")
+        player_hit_sound = mixer.Sound("assets/sound/effects/player_hit.wav")
+        enemy_hit_sound = mixer.Sound("assets/sound/effects/enemy_hit.wav")
         explosion_sound = mixer.Sound("assets/sound/effects/explosion.wav")
 
         self.sounds = {
             "bullet": {'sound': bullet_sound, 'volume': 0.03},
             "dash": {'sound': dash_sound, 'volume': 0.07},
-            "hit": {'sound': hit_sound, 'volume': 0.1},
+            "player_hit": {'sound': player_hit_sound, 'volume': 0.1},
+            "enemy_hit": {'sound': enemy_hit_sound, 'volume': 0.07},
             "explosion": {'sound': explosion_sound, 'volume': 0.05}
         }
 

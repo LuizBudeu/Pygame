@@ -31,11 +31,15 @@ class Enemy(Entity):
         angle = math.atan2(player_center[1] - center[1], player_center[0] - center[0])
         return angle
 
-    def take_damage(self, damage):
+    def take_damage(self, damage, hit_sound, explosion_sound):
         if self.alive():
             self.taken_damage = True
             self.set_intangible(True)
             self.health -= damage
+            hit_sound.play()
+            if self.health <= 0:
+                explosion_sound.play()
+                self.name = 'to_be_deleted'
 
     def set_intangible(self, intangible):
         self.intangible = intangible

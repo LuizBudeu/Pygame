@@ -46,13 +46,16 @@ class Player(Entity):
         else:
             self.color = YELLOW
 
-    def take_damage(self, damage, hit_sound):
+    def take_damage(self, damage, hit_sound, explosion_sound):
         if self.alive():
             self.taken_damage = True
             self.set_intangible(True)
             self.health -= damage
             hit_sound.play()
-
+            if self.health <= 0:
+                explosion_sound.play()
+                self.die()
+                
     def dash(self, dash_sound):
         if self.current_dash_frames > 0:
             self.set_intangible(True)
@@ -82,5 +85,4 @@ class Player(Entity):
     def die(self):
         self.controls_enabled = False
         self.intangible = True
-        self.color = GRAY
 
