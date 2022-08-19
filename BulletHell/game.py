@@ -79,7 +79,8 @@ class Game:
                     self.player.shoot(self.entities, self.sounds['bullet']['sound'])
                 
                 if event.type == self.enemy_bullet_ready:
-                    self.enemy.shoot(self.entities, self.player)
+                    for enemy in self.get_entities_from_name("enemy"):
+                        enemy.shoot(self.entities, self.player)
 
                 if event.type == self.player_dash_ready:
                     self.player.can_dash = True
@@ -94,12 +95,13 @@ class Game:
         self.player = Player(WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2, 35, 35, YELLOW, 'player', max_health=100)
         self.player.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2))
 
-        self.enemy = Enemy(WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2, 35, 35, RED, 'enemy', max_health=100)
-        self.enemy.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2 - 300))
+        enemies = [Enemy(0, 0, 35, 35, RED, 'enemy', max_health=100) for i in range(3)]
 
         self.entities = {}
         self.add_entity(self.player)
-        self.add_entity(self.enemy)
+        for i, enemy in enumerate(enemies):
+            enemy.set_center_position((WINDOW_SIZE[0]/4*(i+1), WINDOW_SIZE[1]/2 - 300))
+            self.add_entity(enemy)
 
         self.muted = False
 
@@ -113,7 +115,8 @@ class Game:
         pygame.time.set_timer(self.player_bullet_ready, self.player.fire_rate)
 
         self.enemy_bullet_ready = pygame.USEREVENT + 1
-        pygame.time.set_timer(self.enemy_bullet_ready, self.enemy.fire_rate)
+
+        pygame.time.set_timer(self.enemy_bullet_ready, 250) # TODO?
 
         self.player_dash_ready = pygame.USEREVENT + 2
         pygame.time.set_timer(self.player_dash_ready, 0)
@@ -131,10 +134,6 @@ class Game:
         self.cleanup()
 
     def handle_player(self):
-        # Death handling
-        """ if not self.player.alive() and not self.player.intangible:
-            self.sounds['explosion']['sound'].play()
-            self.player.die() """
 
         # Dash handling
         if self.player.dashing:
@@ -164,10 +163,6 @@ class Game:
 
     def handle_enemies(self):
         for enemy in self.get_entities_from_name('enemy'):
-                # Death handling
-                """ if not enemy.alive():
-                    self.sounds['explosion']['sound'].play()
-                    enemy.name = 'to_be_deleted' """
 
                 # Hit detection
                 for bullet in self.get_entities_from_name('player_bullet'):
