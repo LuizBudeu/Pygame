@@ -31,17 +31,18 @@ class Game:
                     sys.exit()
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT or event.key == ord('a'):
-                        self.player.velx += -self.player.vel_mod
+                    if self.player.controls_enabled:
+                        if event.key == pygame.K_a:
+                            self.player.velx += -self.player.vel_mod
 
-                    if event.key == pygame.K_RIGHT or event.key == ord('d'):
-                        self.player.velx += self.player.vel_mod
+                        if event.key == pygame.K_d:
+                            self.player.velx += self.player.vel_mod
 
-                    if event.key == pygame.K_UP or event.key == ord('w'):
-                        self.player.vely += -self.player.vel_mod
+                        if event.key == pygame.K_w:
+                            self.player.vely += -self.player.vel_mod
 
-                    if event.key == pygame.K_DOWN or event.key == ord('s'):
-                        self.player.vely += self.player.vel_mod
+                        if event.key == pygame.K_s:
+                            self.player.vely += self.player.vel_mod
                     
                     if event.key == pygame.K_m:
                         if not self.muted:
@@ -58,20 +59,21 @@ class Game:
                             pygame.time.set_timer(self.player_dash_ready, self.player.dash_cooldown)
 
                 if event.type == pygame.KEYUP:
-                    if (event.key == pygame.K_LEFT or event.key == ord('a')):
-                        self.player.velx -= -self.player.vel_mod
+                    if self.player.controls_enabled:
+                        if event.key == pygame.K_a:
+                            self.player.velx -= -self.player.vel_mod
 
-                    if event.key == pygame.K_RIGHT or event.key == ord('d'):
-                        self.player.velx -= self.player.vel_mod
+                        if event.key == pygame.K_d:
+                            self.player.velx -= self.player.vel_mod
 
-                    if (event.key == pygame.K_UP or event.key == ord('w')):
-                        self.player.vely -= -self.player.vel_mod
+                        if event.key == pygame.K_w:
+                            self.player.vely -= -self.player.vel_mod
 
-                    if event.key == pygame.K_DOWN or event.key == ord('s'):
-                        self.player.vely -= self.player.vel_mod
+                        if event.key == pygame.K_s:
+                            self.player.vely -= self.player.vel_mod
                         
                 if event.type == self.player_bullet_ready:
-                    self.player.shoot(self.entities, self.bullet_sound)
+                    self.player.shoot(self.entities, self.sounds['bullet']['sound'])
                 
                 if event.type == self.enemy_bullet_ready:
                     self.enemy.shoot(self.entities, self.player)
@@ -118,9 +120,6 @@ class Game:
             entity.update()
             entity.draw(self.screen)
 
-            if not entity.alive():
-                entity.name = 'to_be_deleted'
-
         self.handle_player()
         self.handle_enemies()
         self.handle_bullets()
@@ -129,9 +128,14 @@ class Game:
         self.cleanup()
 
     def handle_player(self):
+        # Death handling
+        if not self.player.alive() and not self.player.intangible:
+            self.sounds['explosion']['sound'].play()
+            self.player.die()
+
         # Dash handling
         if self.player.dashing:
-            self.player.dash(self.dash_sound)
+            self.player.dash(self.sounds['dash']['sound'])
             self.player.current_dash_frames -= 1
         if self.player.current_dash_frames <= 0:
             self.player.set_intangible(False)
@@ -141,7 +145,7 @@ class Game:
         # Hit detection
         for bullet in self.get_entities_from_name('enemy_bullet'):
             if self.player.hit(bullet) and not self.player.intangible:
-                self.player.take_damage(25)
+                self.player.take_damage(25, self.sounds['hit']['sound'])
         
         # Hit frames handling
         if self.player.current_hit_frames > 0 and self.player.taken_damage:
@@ -157,6 +161,11 @@ class Game:
 
     def handle_enemies(self):
         for enemy in self.get_entities_from_name('enemy'):
+                # Death handling
+                if not enemy.alive():
+                    self.sounds['explosion']['sound'].play()
+                    enemy.name = 'to_be_deleted'
+
                 # Hit detection
                 for bullet in self.get_entities_from_name('player_bullet'):
                     if enemy.hit(bullet) and not enemy.intangible:
@@ -201,19 +210,25 @@ class Game:
         }
 
     def load_sounds(self):
+        # Background music
         mixer.music.load(f"assets/sound/music/gameloop{random.randint(1, 3)}.ogg")
         mixer.music.set_volume(0.2) 
 
-        self.bullet_sound = mixer.Sound("assets/sound/effects/laser.wav")  
-        self.dash_sound = mixer.Sound("assets/sound/effects/dash2.wav")
+        # Sound effects
+        bullet_sound = mixer.Sound("assets/sound/effects/laser.wav")  
+        dash_sound = mixer.Sound("assets/sound/effects/dash2.wav")
+        hit_sound = mixer.Sound("assets/sound/effects/hit.wav")
+        explosion_sound = mixer.Sound("assets/sound/effects/explosion.wav")
 
         self.sounds = {
-            self.bullet_sound: {'volume': 0.03},
-            self.dash_sound: {'volume': 0.07}
+            "bullet": {'sound': bullet_sound, 'volume': 0.03},
+            "dash": {'sound': dash_sound, 'volume': 0.07},
+            "hit": {'sound': hit_sound, 'volume': 0.1},
+            "explosion": {'sound': explosion_sound, 'volume': 0.05}
         }
 
         for sound in self.sounds:
-            mixer.Sound.set_volume(sound, self.sounds[sound]['volume'])
+            mixer.Sound.set_volume(self.sounds[sound]['sound'], self.sounds[sound]['volume'])
 
     def play_background_music(self):
         mixer.music.play(-1)
@@ -221,12 +236,12 @@ class Game:
     def mute_all_sounds(self):
         mixer.music.set_volume(0)
         for sound in self.sounds:
-            mixer.Sound.set_volume(sound, 0)
+            mixer.Sound.set_volume(self.sounds[sound]['sound'], 0)
 
     def unmute_all_sounds(self):
         mixer.music.set_volume(0.2)
         for sound in self.sounds:
-            mixer.Sound.set_volume(sound, self.sounds[sound]['volume'])
+            mixer.Sound.set_volume(self.sounds[sound]['sound'], self.sounds[sound]['volume'])
 
     def add_entity(self, entity):
         self.entities[entity.id] = entity

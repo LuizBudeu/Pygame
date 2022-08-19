@@ -32,11 +32,10 @@ class Enemy(Entity):
         return angle
 
     def take_damage(self, damage):
-        self.taken_damage = True
-        self.set_intangible(True)
-        self.health -= damage
-        if self.health <= 0:
-            self.health = 0
+        if self.alive():
+            self.taken_damage = True
+            self.set_intangible(True)
+            self.health -= damage
 
     def set_intangible(self, intangible):
         self.intangible = intangible

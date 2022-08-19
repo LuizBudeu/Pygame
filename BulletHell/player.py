@@ -22,6 +22,7 @@ class Player(Entity):
         self.max_hit_frames = 15
         self.current_hit_frames = self.max_hit_frames
         self.taken_damage = False
+        self.controls_enabled = True
 
     def shoot(self, entities, bullet_sound):
         if self.alive():
@@ -45,12 +46,12 @@ class Player(Entity):
         else:
             self.color = YELLOW
 
-    def take_damage(self, damage):
-        self.taken_damage = True
-        self.set_intangible(True)
-        self.health -= damage
-        if self.health <= 0:
-            self.health = 0
+    def take_damage(self, damage, hit_sound):
+        if self.alive():
+            self.taken_damage = True
+            self.set_intangible(True)
+            self.health -= damage
+            hit_sound.play()
 
     def dash(self, dash_sound):
         if self.current_dash_frames > 0:
@@ -77,4 +78,9 @@ class Player(Entity):
         elif self.vely < 0:
             direction[1] = -1
         return direction
+
+    def die(self):
+        self.controls_enabled = False
+        self.intangible = True
+        self.color = GRAY
 
