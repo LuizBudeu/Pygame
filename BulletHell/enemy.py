@@ -19,7 +19,7 @@ class Enemy(Entity):
     def shoot(self, entities, player):
         if self.alive():
             bullet = Bullet(self.rect.centerx, self.rect.centery, 10, 10, REDDISHBROWN, 'enemy_bullet')
-            bullet.set_center_position((self.rect.centerx, self.rect.centery))
+            bullet.set_center_position(self.rect.center)
             angle = self.get_bullet_direction(player)
             bullet.velx = bullet.vel_mod * math.cos(angle)
             bullet.vely = bullet.vel_mod * math.sin(angle)
