@@ -30,7 +30,9 @@ class Player(Entity):
 
     def get_bullet_direction(self):
         mx, my = get_mouse_pos()
+        print(f"mx: {mx}, my: {my}")
         center = self.get_center_position()
+        print(center)
         angle = math.atan2(my - center[1], mx - center[0])
         return angle
 
