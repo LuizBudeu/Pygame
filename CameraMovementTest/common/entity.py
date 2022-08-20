@@ -1,8 +1,6 @@
 import pygame
 import math
 from .settings import *
-from lifebar import Lifebar
-
 
 
 class Entity:

@@ -3,9 +3,9 @@ import pygame
 import sys
 import time
 from player import Player
-from entity import Entity
+from common.entity import Entity
 from camera import Camera
-from utils.settings import *
+from common.settings import *
 
 
 class Game:
@@ -65,7 +65,6 @@ class Game:
         self.player.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2))
 
         enemies = [Entity(0, 0, 35, 35, RED, 'enemy', max_health=100) for i in range(3)]
-        self.enemy.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2 - 300))
 
         self.entities = {}
         self.add_entity(self.player)

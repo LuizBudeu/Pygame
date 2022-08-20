@@ -1,5 +1,5 @@
 import pygame 
-from utils.settings import *
+from common.settings import *
 
 
 class Camera:
