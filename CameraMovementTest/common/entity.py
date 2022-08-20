@@ -1,6 +1,8 @@
 import pygame
 import math
 from .settings import *
+from lifebar import Lifebar
+
 
 
 class Entity:
@@ -81,3 +83,9 @@ class Entity:
             return False
         else:
             return True
+
+    def show_lifebars(self, screen):
+        self.lifebar = Lifebar(self.x, self.y, 40, 6, self.max_health)
+        self.lifebar.take_damage(self.max_health - self.health)  
+        self.lifebar.set_center_position((self.rect.centerx, self.rect.centery - 30))
+        self.lifebar.draw(screen)

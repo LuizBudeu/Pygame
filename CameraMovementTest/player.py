@@ -1,7 +1,7 @@
 import pygame
 import math
-from utils.settings import *
-from entity import Entity
+from common.settings import *
+from common.entity import Entity
 
 class Player(Entity):
     def __init__(self, x, y, width, height, color, name):

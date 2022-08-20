@@ -200,6 +200,7 @@ class Game:
                 if self.player.hit(entity.rect):
                     entity.apply_effect(self.player)
                     pygame.time.set_timer(self.player_bullet_ready, self.player.fire_rate) # TODO temp
+                    mixer.Sound.set_volume(self.sounds['bullet']['sound'], self.sounds['bullet']['volume']-0.01)
                     entity.name = 'to_be_deleted'
      
     def draw_ui(self):

@@ -64,12 +64,14 @@ class Game:
         self.player = Player(WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2, 35, 35, YELLOW, 'player')
         self.player.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2))
 
-        self.enemy = Entity(WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2, 35, 35, RED, 'enemy')
+        enemies = [Entity(0, 0, 35, 35, RED, 'enemy', max_health=100) for i in range(3)]
         self.enemy.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2 - 300))
 
         self.entities = {}
         self.add_entity(self.player)
-        self.add_entity(self.enemy)
+        for i, enemy in enumerate(enemies):
+            enemy.set_center_position((WINDOW_SIZE[0]/4*(i+1), WINDOW_SIZE[1]/2 - 300))
+            self.add_entity(enemy)
 
     def add_entity(self, entity):
         self.entities[entity.id] = entity
