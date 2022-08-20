@@ -147,6 +147,7 @@ class Game:
         if self.player.dashing:
             self.player.dash(self.sounds['dash']['sound'])
             self.player.current_dash_frames -= 1
+            draw_fading_rect(self.screen, self.player.rect.x, self.player.rect.y, self.player.rect.width, self.player.rect.height, BLUE, self.player.current_dash_frames - self.player.max_dash_frames)
         if self.player.current_dash_frames <= 0:
             self.player.set_intangible(False)
             self.player.dashing = False

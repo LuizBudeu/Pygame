@@ -55,3 +55,10 @@ def draw_transparent_rect(screen, center_pos=(100, 100), topleft_pos=None, dim=W
 def get_mouse_pos():
     return pygame.mouse.get_pos()
 
+def draw_fading_rect(screen, x, y, width, height, color, time):
+    w = width-time 
+    h = height-time
+    if w > 0 and h > 0:
+        pygame.draw.rect(screen, color, (x+time/2, y+time/2, w, h), 3)
+
+
