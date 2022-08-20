@@ -35,12 +35,15 @@ class Entity:
             self.x += self.velx / math.sqrt(2)
             self.y += self.vely / math.sqrt(2)
 
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        self.rect.x = self.x
+        self.rect.y = self.y
 
     def set_center_position(self, center):
         self.x = center[0] - self.width / 2
         self.y = center[1] - self.height / 2
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+
+        self.rect.x = self.x
+        self.rect.y = self.y
 
     def get_center_position(self):
         return self.rect.center

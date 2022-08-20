@@ -7,6 +7,7 @@ from common.settings import *
 from common.ui_utils import *
 from player import Player
 from enemy import Enemy
+from item import Item
 
 
 class Game:
@@ -92,6 +93,9 @@ class Game:
             self.clock.tick(120)
 
     def init_game(self):
+        self.load_sounds()
+        self.load_images()
+
         self.player = Player(0, 0, 35, 35, YELLOW, 'player', max_health=100)
         self.player.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2+300))
 
@@ -103,12 +107,13 @@ class Game:
             enemy.set_center_position((WINDOW_SIZE[0]/4*(i+1), WINDOW_SIZE[1]/2 - 300))
             self.add_entity(enemy)
 
-        self.muted = False
+        item_increased_fire_rate = Item(0, 0, 1, 1, None, 'item_increase_fire_rate', self.images['items']['increase_fire_rate'])
+        item_increased_fire_rate.set_center_position((WINDOW_SIZE[0]/9, WINDOW_SIZE[1]*0.8))
+        self.add_entity(item_increased_fire_rate)
 
-        self.init_time_events()
-        self.load_sounds()
-        self.load_images()
+        self.muted = False
         self.play_background_music() 
+        self.init_time_events()
 
     def init_time_events(self):
         self.player_bullet_ready = pygame.USEREVENT + 0
@@ -116,7 +121,7 @@ class Game:
 
         self.enemy_bullet_ready = pygame.USEREVENT + 1
 
-        pygame.time.set_timer(self.enemy_bullet_ready, 250) # TODO cada inimigo com próprio firerate?
+        pygame.time.set_timer(self.enemy_bullet_ready, 250)
 
         self.player_dash_ready = pygame.USEREVENT + 2
         pygame.time.set_timer(self.player_dash_ready, 0)
@@ -129,6 +134,7 @@ class Game:
         self.handle_player()
         self.handle_enemies()
         self.handle_bullets()
+        self.handle_items()
 
         self.draw_ui()
         self.cleanup()
@@ -161,34 +167,38 @@ class Game:
 
         # Visual effects
         self.player.show_lifebars(self.screen)
-        #self.player.show_hitbox(self.screen)
 
     def handle_enemies(self):
         for enemy in self.get_entities_from_name('enemy'):
 
-                # Hit detection
-                for bullet in self.get_entities_from_name('player_bullet'):
-                    if enemy.hit(bullet) and not enemy.intangible:
-                        enemy.take_damage(25, self.sounds['enemy_hit']['sound'], self.sounds['explosion']['sound'])
-                
-                # Hit frames handling
-                if enemy.current_hit_frames > 0 and enemy.taken_damage:
-                    enemy.current_hit_frames -= 1
-                if enemy.current_hit_frames <= 0:
-                    enemy.set_intangible(False)
-                    enemy.taken_damage = False
-                    enemy.current_hit_frames = enemy.max_hit_frames
+            # Hit detection
+            for bullet in self.get_entities_from_name('player_bullet'):
+                if enemy.hit(bullet) and not enemy.intangible:
+                    enemy.take_damage(25, self.sounds['enemy_hit']['sound'], self.sounds['explosion']['sound'])
+            
+            # Hit frames handling
+            if enemy.current_hit_frames > 0 and enemy.taken_damage:
+                enemy.current_hit_frames -= 1
+            if enemy.current_hit_frames <= 0:
+                enemy.set_intangible(False)
+                enemy.taken_damage = False
+                enemy.current_hit_frames = enemy.max_hit_frames
 
-                # Visual effects
-                enemy.show_lifebars(self.screen)
-                #enemy.show_hitbox(self.screen)
+            # Visual effects
+            enemy.show_lifebars(self.screen)
 
     def handle_bullets(self):
         for entity in self.entities.values():
             if 'bullet' in entity.name:
-                #entity.show_hitbox(self.screen)
-
                 if entity.out_of_bounds():
+                    entity.name = 'to_be_deleted'
+
+    def handle_items(self):
+        for entity in self.entities.values():
+            if 'item' in entity.name:
+                if self.player.hit(entity.rect):
+                    entity.apply_effect(self.player)
+                    pygame.time.set_timer(self.player_bullet_ready, self.player.fire_rate) # TODO temp
                     entity.name = 'to_be_deleted'
      
     def draw_ui(self):
@@ -203,10 +213,14 @@ class Game:
     def load_images(self):
         unmuted_icon_surf = pygame.image.load("assets/images/unmuted_icon.png").convert_alpha()
         muted_icon_surf = pygame.image.load("assets/images/muted_icon.png").convert_alpha()
+        increase_fire_rate_icon_surf = pygame.image.load("assets/images/item_increase_fire_rate_icon.png").convert_alpha()
 
         self.images = {
             'unmuted_icon': unmuted_icon_surf,
-            'muted_icon': muted_icon_surf
+            'muted_icon': muted_icon_surf,
+            'items': {
+                'increase_fire_rate': increase_fire_rate_icon_surf
+            }
         }
 
     def load_sounds(self):
