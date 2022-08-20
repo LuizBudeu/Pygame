@@ -21,6 +21,7 @@ class Player(Entity):
 
     def shoot(self, entities, bullet_sound):
         bullet = Bullet(self.rect.centerx, self.rect.centery, 10, 10, LIGHTBLUE)
+        bullet.set_center_position(self.rect.center)
         angle = self.get_bullet_direction()
         bullet.velx = bullet.vel_mod * math.cos(angle)
         bullet.vely = bullet.vel_mod * math.sin(angle)
@@ -30,6 +31,9 @@ class Player(Entity):
 
     def get_bullet_direction(self):
         mx, my = get_mouse_pos()
+        offx = self.rect.centerx - WINDOW_SIZE[0] // 2
+        offy = self.rect.centery - WINDOW_SIZE[1] // 2
+        mx, my = mx + offx, my + offy
         print(f"mx: {mx}, my: {my}")
         center = self.get_center_position()
         print(center)
