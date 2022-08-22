@@ -110,9 +110,9 @@ class Game:
         self.handle_player()
         
         for entity in self.entities.values():
-            entity.update()
             self.camera.center_target_position(self.player)
             self.camera.update(entity)
+            entity.update()
             entity.draw(self.screen)
             
         #self.camera.update(self.entities)
