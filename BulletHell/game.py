@@ -111,10 +111,12 @@ class Game:
         
         for entity in self.entities.values():
             entity.update()
-            if show_hitboxes:
-                entity.show_hitbox(self.screen)
+            self.camera.center_target_position(self.player)
+            self.camera.update(entity)
+            entity.draw(self.screen)
             
-        self.camera.draw(self.entities)
+        #self.camera.update(self.entities)
+        #print(self.camera.offset)
 
         self.draw_ui()
 
