@@ -8,6 +8,7 @@ from common.ui_utils import *
 from player import Player
 from enemy import Enemy
 from item import Item
+from camera import Camera
 
 
 class Game:
@@ -96,15 +97,18 @@ class Game:
         self.load_sounds()
         self.load_images()
 
+        self.camera = Camera(self.screen)
+
         self.player = Player(0, 0, 35, 35, YELLOW, 'player', max_health=100)
         self.player.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2+300))
 
-        enemies = [Enemy(0, 0, 35, 35, RED, 'enemy', max_health=100) for i in range(3)]
+        number_of_enemies = 1
+        enemies = [Enemy(0, 0, 35, 35, RED, 'enemy', max_health=100) for i in range(number_of_enemies)]
 
         self.entities = {}
         self.add_entity(self.player)
         for i, enemy in enumerate(enemies):
-            enemy.set_center_position((WINDOW_SIZE[0]/4*(i+1), WINDOW_SIZE[1]/2 - 300))
+            enemy.set_center_position((WINDOW_SIZE[0]/(number_of_enemies+1)*(i+1), WINDOW_SIZE[1]/2 - 300))
             self.add_entity(enemy)
 
         item_increased_fire_rate = Item(0, 0, 1, 1, None, 'item_increase_fire_rate', self.images['items']['increase_fire_rate'])
@@ -130,6 +134,9 @@ class Game:
         for entity in self.entities.values():
             entity.update()
             entity.draw(self.screen)
+
+        self.camera.center_target_position(self.player)
+        #self.camera.update(entity)
 
         self.handle_player()
         self.handle_enemies()
