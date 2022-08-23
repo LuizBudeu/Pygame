@@ -8,7 +8,7 @@ from .common.ui_utils import *
 from .player import Player
 from .enemy import Enemy
 from .item import Item
-from .camera import Camera
+from .common.camera import Camera
 
 
 class Game:
