@@ -3,12 +3,12 @@ import pygame
 from pygame import mixer
 import sys
 import time
-from common.settings import *
-from common.ui_utils import *
-from player import Player
-from enemy import Enemy
-from item import Item
-from camera import Camera
+from .common.settings import *
+from .common.ui_utils import *
+from .player import Player
+from .enemy import Enemy
+from .item import Item
+from .camera import Camera
 
 
 class Game:
@@ -29,24 +29,24 @@ class Game:
             self.screen.fill(NIGHTBLUE)
 
             for event in pygame.event.get():
+                # Quit event
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
 
                 if event.type == pygame.KEYDOWN:
+                    # Movement events
                     if self.player.controls_enabled:
                         if event.key == pygame.K_a:
                             self.player.velx += -self.player.vel_mod
-
                         if event.key == pygame.K_d:
                             self.player.velx += self.player.vel_mod
-
                         if event.key == pygame.K_w:
                             self.player.vely += -self.player.vel_mod
-
                         if event.key == pygame.K_s:
                             self.player.vely += self.player.vel_mod
                     
+                    # Mute/unmute event
                     if event.key == pygame.K_m:
                         if not self.muted:
                             self.mute_all_sounds()
@@ -55,13 +55,20 @@ class Game:
                             self.unmute_all_sounds()
                             self.muted = False
 
+                    # Restart event
                     if event.key == pygame.K_r:
                         self.init_game()
 
+                    # Quit event
                     if event.key == pygame.K_q:
                         pygame.quit()
                         sys.exit()
 
+                    # God mode event
+                    if event.key == pygame.K_g:
+                        self.player.set_intangible(not self.player.intangible)
+
+                    # Dash event
                     if event.key == pygame.K_SPACE:
                         if self.player.can_dash:
                             self.player.dashing = True
@@ -69,26 +76,27 @@ class Game:
                             pygame.time.set_timer(self.player_dash_ready, self.player.dash_cooldown)
 
                 if event.type == pygame.KEYUP:
+                    # Movement events
                     if self.player.controls_enabled:
                         if event.key == pygame.K_a:
                             self.player.velx -= -self.player.vel_mod
-
                         if event.key == pygame.K_d:
                             self.player.velx -= self.player.vel_mod
-
                         if event.key == pygame.K_w:
                             self.player.vely -= -self.player.vel_mod
-
                         if event.key == pygame.K_s:
                             self.player.vely -= self.player.vel_mod
                         
+                # Player bullet ready event
                 if event.type == self.player_bullet_ready:
                     self.player.shoot(self.entities, self.sounds['bullet']['sound'])
                 
+                # Enemy bullet ready event
                 if event.type == self.enemy_bullet_ready:
                     for enemy in self.get_entities_from_name("enemy"):
                         enemy.shoot(self.entities, self.player)
 
+                # Player dash ready event
                 if event.type == self.player_dash_ready:
                     self.player.can_dash = True
                     pygame.time.set_timer(self.player_dash_ready, 0)
@@ -129,13 +137,10 @@ class Game:
         self.handle_bullets()
         self.handle_items()
 
-        #self.camera.update_all(self.entities) # TODO continuar aqui
         for entity in self.entities.values():
             self.camera.update(entity)
             entity.update()
             entity.draw(self.screen)
-
-        #self.camera.update_all(self.entities)
 
         self.draw_ui()
         self.cleanup()
@@ -188,21 +193,21 @@ class Game:
 
             # Visual effects
             enemy.show_lifebars(self.screen)
+            enemy.show_range(self.screen)
 
     def handle_bullets(self):
-        for entity in self.entities.values():
-            if 'bullet' in entity.name:
-                if entity.out_of_bounds():
-                    entity.name = 'to_be_deleted'
+        for bullet in self.get_entities_like_name('bullet'):
+            """ if bullet.distance_traveled() >= bullet.max_distance: """
+            if bullet.out_of_bounds():
+                bullet.name = 'to_be_deleted'
 
     def handle_items(self):
-        for entity in self.entities.values():
-            if 'item' in entity.name:
-                if self.player.hit(entity.rect):
-                    entity.apply_effect(self.player)
+        for item in self.get_entities_like_name('item'):
+                if self.player.hit(item.rect):
+                    item.apply_effect(self.player)
                     pygame.time.set_timer(self.player_bullet_ready, self.player.fire_rate) # TODO temp
                     mixer.Sound.set_volume(self.sounds['bullet']['sound'], self.sounds['bullet']['volume']-0.01)
-                    entity.name = 'to_be_deleted'
+                    item.name = 'to_be_deleted'
      
     def draw_ui(self):
         self.draw_sound_icon()
@@ -274,14 +279,17 @@ class Game:
     def get_entities_from_name(self, name):
         return [entity for entity in self.entities.values() if entity.name == name]
 
+    def get_entities_like_name(self, name):
+        return [entity for entity in self.entities.values() if name in entity.name]
+
     def create_player(self):
-        self.player = Player(0, 0, 35, 35, YELLOW, 'player', max_health=100)
+        self.player = Player(0, 0, 32, 32, YELLOW, 'player', max_health=100)
         self.player.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2))
         self.add_entity(self.player)
 
     def create_enemies(self):
-        number_of_enemies = 1
-        enemies = [Enemy(0, 0, 35, 35, RED, 'enemy', max_health=100) for i in range(number_of_enemies)]
+        number_of_enemies = 3
+        enemies = [Enemy(0, 0, 32, 32, RED, 'enemy', max_health=100) for i in range(number_of_enemies)]
 
         for i, enemy in enumerate(enemies):
             enemy.set_center_position((WINDOW_SIZE[0]/(number_of_enemies+1)*(i+1), WINDOW_SIZE[1]/2 - 300))

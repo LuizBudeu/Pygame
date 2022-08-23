@@ -1,9 +1,9 @@
 import pygame
 import math
-from common.settings import *
-from common.ui_utils import *
-from common.entity import Entity
-from bullet import Bullet
+from .common.settings import *
+from .common.ui_utils import *
+from .common.entity import Entity
+from .bullet import Bullet
 
 
 class Enemy(Entity):
@@ -15,15 +15,17 @@ class Enemy(Entity):
         self.taken_damage = False
         self.max_hit_frames = 15
         self.current_hit_frames = self.max_hit_frames
+        self.vision_range = WINDOW_SIZE[1] // 2
 
     def shoot(self, entities, player):
         if self.alive():
-            bullet = Bullet(self.rect.centerx, self.rect.centery, 10, 10, REDDISHBROWN, 'enemy_bullet')
-            bullet.set_center_position(self.rect.center)
-            angle = self.get_bullet_direction(player)
-            bullet.velx = bullet.vel_mod * math.cos(angle)
-            bullet.vely = bullet.vel_mod * math.sin(angle)
-            entities[bullet.id] = bullet
+            if self.distance_to(player) < self.vision_range:
+                bullet = Bullet(self.rect.centerx, self.rect.centery, 10, 10, REDDISHBROWN, 'enemy_bullet')
+                bullet.set_center_position(self.rect.center)
+                angle = self.get_bullet_direction(player)
+                bullet.velx = bullet.vel_mod * math.cos(angle)
+                bullet.vely = bullet.vel_mod * math.sin(angle)
+                entities[bullet.id] = bullet
 
     def get_bullet_direction(self, player):
         center = self.get_center_position()
@@ -48,5 +50,10 @@ class Enemy(Entity):
         else:
             self.color = RED
 
+    def distance_to(self, player):
+        center = self.get_center_position()
+        player_center = player.get_center_position()
+        return math.sqrt((center[0] - player_center[0]) ** 2 + (center[1] - player_center[1]) ** 2)
 
-    
+    def show_range(self, screen):
+        pygame.draw.circle(screen, RED, self.get_center_position(), self.vision_range, 1)

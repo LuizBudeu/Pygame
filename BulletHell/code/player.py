@@ -1,10 +1,10 @@
 import pygame
 from pygame import mixer
 import math
-from common.settings import *
-from common.ui_utils import *
-from common.entity import Entity
-from bullet import Bullet
+from .common.settings import *
+from .common.ui_utils import *
+from .common.entity import Entity
+from .bullet import Bullet
 
 
 class Player(Entity):

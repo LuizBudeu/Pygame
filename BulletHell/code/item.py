@@ -1,7 +1,7 @@
 import pygame
-from common.settings import *
-from common.ui_utils import *
-from common.entity import Entity
+from .common.settings import *
+from .common.ui_utils import *
+from .common.entity import Entity
 
 
 class Item(Entity):

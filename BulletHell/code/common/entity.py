@@ -1,7 +1,7 @@
 import pygame
 import math
 from .settings import *
-from lifebar import Lifebar
+from .lifebar import Lifebar
 
 
 
