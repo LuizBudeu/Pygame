@@ -53,12 +53,14 @@ class Entity:
 
     def set_topleft_position(self, topleft):
         self.rect.topleft = topleft
+        self.x = topleft[0]
+        self.y = topleft[1]
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
 
     def show_hitbox(self, screen):
-        pygame.draw.rect(screen, WHITE, self.rect, 2)
+        pygame.draw.rect(screen, WHITE, self.rect, 1)
 
     def hit(self, other_rect):
         if self.rect.colliderect(other_rect):
@@ -66,9 +68,9 @@ class Entity:
         return False
 
     def out_of_bounds(self):
-        if self.x + self.width + 10 < 0 or self.x > WINDOW_SIZE[0] + 10:
+        if self.rect.x + self.width + 10 < 0 or self.rect.x > WINDOW_SIZE[0] + 10:
             return True
-        elif self.y + self.height + 10 < 0 or self.y > WINDOW_SIZE[1] + 10:
+        elif self.rect.y + self.height + 10 < 0 or self.rect.y > WINDOW_SIZE[1] + 10:
             return True
         else:
             return False

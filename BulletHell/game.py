@@ -19,6 +19,7 @@ class Game:
         self.screen = pygame.display.set_mode(WINDOW_SIZE)    
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("Bullet Hell")
+        pygame.display.set_icon(pygame.image.load('assets/images/item_increase_fire_rate_icon.png'))
 
         self.init_game()
         self.game_loop()
@@ -56,6 +57,10 @@ class Game:
 
                     if event.key == pygame.K_r:
                         self.init_game()
+
+                    if event.key == pygame.K_q:
+                        pygame.quit()
+                        sys.exit()
 
                     if event.key == pygame.K_SPACE:
                         if self.player.can_dash:
@@ -97,23 +102,11 @@ class Game:
         self.load_sounds()
         self.load_images()
 
-        self.camera = Camera(self.screen)
-
-        self.player = Player(0, 0, 35, 35, YELLOW, 'player', max_health=100)
-        self.player.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2+300))
-
-        number_of_enemies = 1
-        enemies = [Enemy(0, 0, 35, 35, RED, 'enemy', max_health=100) for i in range(number_of_enemies)]
-
         self.entities = {}
-        self.add_entity(self.player)
-        for i, enemy in enumerate(enemies):
-            enemy.set_center_position((WINDOW_SIZE[0]/(number_of_enemies+1)*(i+1), WINDOW_SIZE[1]/2 - 300))
-            self.add_entity(enemy)
-
-        item_increased_fire_rate = Item(0, 0, 1, 1, None, 'item_increase_fire_rate', self.images['items']['increase_fire_rate'])
-        item_increased_fire_rate.set_center_position((WINDOW_SIZE[0]/9, WINDOW_SIZE[1]*0.8))
-        self.add_entity(item_increased_fire_rate)
+        self.create_player()
+        self.create_enemies()
+        self.create_items()
+        self.create_camera()
 
         self.muted = False
         self.play_background_music() 
@@ -131,17 +124,18 @@ class Game:
         pygame.time.set_timer(self.player_dash_ready, 0)
 
     def screen_update(self):
-        for entity in self.entities.values():
-            entity.update()
-            entity.draw(self.screen)
-
-        self.camera.center_target_position(self.player)
-        #self.camera.update(entity)
-
         self.handle_player()
         self.handle_enemies()
         self.handle_bullets()
         self.handle_items()
+
+        #self.camera.update_all(self.entities) # TODO continuar aqui
+        for entity in self.entities.values():
+            self.camera.update(entity)
+            entity.update()
+            entity.draw(self.screen)
+
+        #self.camera.update_all(self.entities)
 
         self.draw_ui()
         self.cleanup()
@@ -279,3 +273,25 @@ class Game:
 
     def get_entities_from_name(self, name):
         return [entity for entity in self.entities.values() if entity.name == name]
+
+    def create_player(self):
+        self.player = Player(0, 0, 35, 35, YELLOW, 'player', max_health=100)
+        self.player.set_center_position((WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2))
+        self.add_entity(self.player)
+
+    def create_enemies(self):
+        number_of_enemies = 1
+        enemies = [Enemy(0, 0, 35, 35, RED, 'enemy', max_health=100) for i in range(number_of_enemies)]
+
+        for i, enemy in enumerate(enemies):
+            enemy.set_center_position((WINDOW_SIZE[0]/(number_of_enemies+1)*(i+1), WINDOW_SIZE[1]/2 - 300))
+            self.add_entity(enemy)
+
+    def create_items(self):
+        item_increased_fire_rate = Item(0, 0, 1, 1, None, 'item_increase_fire_rate', self.images['items']['increase_fire_rate'])
+        item_increased_fire_rate.set_center_position((WINDOW_SIZE[0]/9, WINDOW_SIZE[1]*0.8))
+        self.add_entity(item_increased_fire_rate)
+
+    def create_camera(self):
+        self.camera = Camera(self.screen)
+        self.camera.set_center_target(self.player)

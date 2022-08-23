@@ -7,29 +7,25 @@ class Camera:
         self.screen = screen
         self.offset = pygame.math.Vector2(100, 100)
 
-    def center_target_position(self, target):
-        self.offset.x = target.rect.centerx - WINDOW_SIZE[0] // 2
-        self.offset.y = target.rect.centery - WINDOW_SIZE[1] // 2
+    def set_center_target(self, target):
+        self.target = target
+
+    def center_target_position(self):
+        self.offset.x = self.target.rect.centerx - WINDOW_SIZE[0] // 2
+        self.offset.y = self.target.rect.centery - WINDOW_SIZE[1] // 2
 
     def update(self, entity):
-        #self.center_target_position(entities[0])
-
-        """ offset_pos = entity.rect.topleft - self.offset
-        pygame.draw.rect(self.screen, entity.color, (offset_pos, entity.dimension)) """
-        #new_pos = entity.rect.topleft - self.offset
+        self.center_target_position()
         entity.rect.topleft = entity.rect.topleft - self.offset
-
-        """ entity.rect.x = new_pos[0]
-        entity.rect.y = new_pos[1] """
-
-        #entity.rect = pygame.Rect(new_pos, entity.dimension)
-        #print(entity.rect.topleft)
+        entity.x = entity.x - self.offset.x
+        entity.y = entity.y - self.offset.y
 
     def update_all(self, entities):
-        self.center_target_position(entities[0])
-
+        self.center_target_position()
         for entity in entities.values():
             entity.rect.topleft = entity.rect.topleft - self.offset
+            entity.rect.x = entity.rect.x - self.offset.x
+            entity.rect.y = entity.rect.y - self.offset.y
 
 
 
