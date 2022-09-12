@@ -18,9 +18,10 @@ class Enemy(Entity):
         self.vision_range = WINDOW_SIZE[1] // 2
 
     def shoot(self, entities, player):
-        if self.alive():
+        if self.alive() and player.alive():
             if self.distance_to(player) < self.vision_range:
-                bullet = Bullet(self.rect.centerx, self.rect.centery, 10, 10, REDDISHBROWN, 'enemy_bullet')
+                bullet = Bullet(self.rect.centerx, self.rect.centery,
+                                10, 10, REDDISHBROWN, 'enemy_bullet')
                 bullet.set_center_position(self.rect.center)
                 angle = self.get_bullet_direction(player)
                 bullet.velx = bullet.vel_mod * math.cos(angle)
@@ -30,7 +31,8 @@ class Enemy(Entity):
     def get_bullet_direction(self, player):
         center = self.get_center_position()
         player_center = player.get_center_position()
-        angle = math.atan2(player_center[1] - center[1], player_center[0] - center[0])
+        angle = math.atan2(
+            player_center[1] - center[1], player_center[0] - center[0])
         return angle
 
     def take_damage(self, damage, hit_sound, explosion_sound):
@@ -56,4 +58,5 @@ class Enemy(Entity):
         return math.sqrt((center[0] - player_center[0]) ** 2 + (center[1] - player_center[1]) ** 2)
 
     def show_range(self, screen):
-        pygame.draw.circle(screen, RED, self.get_center_position(), self.vision_range, 1)
+        pygame.draw.circle(
+            screen, RED, self.get_center_position(), self.vision_range, 1)

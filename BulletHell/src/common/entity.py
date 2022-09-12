@@ -4,7 +4,6 @@ from .settings import *
 from .lifebar import Lifebar
 
 
-
 class Entity:
     unique_id = 0
 
@@ -76,7 +75,7 @@ class Entity:
             return False
 
     def take_damage(self, damage):
-        self.health -= damage 
+        self.health -= damage
         if self.health <= 0:
             self.health = 0
 
@@ -88,6 +87,7 @@ class Entity:
 
     def show_lifebars(self, screen):
         self.lifebar = Lifebar(self.x, self.y, 40, 6, self.max_health)
-        self.lifebar.take_damage(self.max_health - self.health)  
-        self.lifebar.set_center_position((self.rect.centerx, self.rect.centery - 30))
+        self.lifebar.take_damage(self.max_health - self.health)
+        self.lifebar.set_center_position(
+            (self.rect.centerx, self.rect.centery - 30))
         self.lifebar.draw(screen)

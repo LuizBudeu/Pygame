@@ -14,10 +14,10 @@ class Player(Entity):
         self.dash_vel_mod = 8
         self.max_dash_frames = 15
         self.current_dash_frames = self.max_dash_frames
-        self.fire_rate = 250 # time in ms
+        self.fire_rate = 250  # time in ms
         self.intangible = False
         self.dashing = False
-        self.dash_cooldown = 1000 # time in ms
+        self.dash_cooldown = 1000  # time in ms
         self.can_dash = True
         self.max_hit_frames = 15
         self.current_hit_frames = self.max_hit_frames
@@ -26,13 +26,14 @@ class Player(Entity):
 
     def shoot(self, entities, bullet_sound):
         if self.alive():
-            bullet = Bullet(self.rect.centerx, self.rect.centery, 10, 10, LIGHTBLUE, 'player_bullet')
+            bullet = Bullet(self.rect.centerx, self.rect.centery,
+                            10, 10, LIGHTBLUE, 'player_bullet')
             bullet.set_center_position(center=self.rect.center)
             angle = self.get_bullet_direction()
             bullet.velx = bullet.vel_mod * math.cos(angle)
             bullet.vely = bullet.vel_mod * math.sin(angle)
             entities[bullet.id] = bullet
-            bullet_sound.play()  
+            bullet_sound.play()
 
     def get_bullet_direction(self):
         mx, my = get_mouse_pos()
@@ -56,7 +57,7 @@ class Player(Entity):
             if self.health <= 0:
                 explosion_sound.play()
                 self.die()
-                
+
     def dash(self, dash_sound):
         if self.current_dash_frames > 0:
             self.set_intangible(True)
@@ -86,6 +87,7 @@ class Player(Entity):
     def die(self):
         self.controls_enabled = False
         self.intangible = True
+        self.velx, self.vely = 0, 0
 
     def limit_out_of_bounds(self):
         if self.x < 0:

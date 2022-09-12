@@ -17,7 +17,7 @@ class Item(Entity):
         screen.blit(self.surf, self.rect)
         pygame.draw.rect(screen, WHITE, self.rect, 1)
 
+
     # This method is necessary as to not call the parent's method
 """     def update(self):
         pass """
-

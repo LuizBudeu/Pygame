@@ -1,4 +1,4 @@
-import random 
+import random
 import pygame
 from pygame import mixer
 import sys
@@ -13,13 +13,15 @@ from .common.camera import Camera
 
 class Game:
     def __init__(self):
-        pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=512)
+        pygame.mixer.pre_init(frequency=44100, size=-
+                              16, channels=2, buffer=512)
         pygame.mixer.init()
         pygame.init()
-        self.screen = pygame.display.set_mode(WINDOW_SIZE)    
+        self.screen = pygame.display.set_mode(WINDOW_SIZE)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("Bullet Hell")
-        pygame.display.set_icon(pygame.image.load('assets/images/item_increase_fire_rate_icon.png'))
+        pygame.display.set_icon(pygame.image.load(
+            'assets/images/item_increase_fire_rate_icon.png'))
 
         self.init_game()
         self.game_loop()
@@ -45,7 +47,7 @@ class Game:
                             self.player.vely += -self.player.vel_mod
                         if event.key == pygame.K_s:
                             self.player.vely += self.player.vel_mod
-                    
+
                     # Mute/unmute event
                     if event.key == pygame.K_m:
                         if not self.muted:
@@ -70,10 +72,11 @@ class Game:
 
                     # Dash event
                     if event.key == pygame.K_SPACE:
-                        if self.player.can_dash:
+                        if self.player.can_dash and self.player.controls_enabled:
                             self.player.dashing = True
                             self.player.can_dash = False
-                            pygame.time.set_timer(self.player_dash_ready, self.player.dash_cooldown)
+                            pygame.time.set_timer(
+                                self.player_dash_ready, self.player.dash_cooldown)
 
                 if event.type == pygame.KEYUP:
                     # Movement events
@@ -86,11 +89,12 @@ class Game:
                             self.player.vely -= -self.player.vel_mod
                         if event.key == pygame.K_s:
                             self.player.vely -= self.player.vel_mod
-                        
+
                 # Player bullet ready event
                 if event.type == self.player_bullet_ready:
-                    self.player.shoot(self.entities, self.sounds['bullet']['sound'])
-                
+                    self.player.shoot(
+                        self.entities, self.sounds['bullet']['sound'])
+
                 # Enemy bullet ready event
                 if event.type == self.enemy_bullet_ready:
                     for enemy in self.get_entities_from_name("enemy"):
@@ -117,7 +121,7 @@ class Game:
         self.create_camera()
 
         self.muted = False
-        self.play_background_music() 
+        self.play_background_music()
         self.init_time_events()
 
     def init_time_events(self):
@@ -153,7 +157,8 @@ class Game:
         if self.player.dashing:
             self.player.dash(self.sounds['dash']['sound'])
             self.player.current_dash_frames -= 1
-            draw_fading_rect(self.screen, self.player.rect.x, self.player.rect.y, self.player.rect.width, self.player.rect.height, BLUE, self.player.current_dash_frames - self.player.max_dash_frames)
+            draw_fading_rect(self.screen, self.player.rect.x, self.player.rect.y, self.player.rect.width,
+                             self.player.rect.height, BLUE, self.player.current_dash_frames - self.player.max_dash_frames)
         if self.player.current_dash_frames <= 0:
             self.player.set_intangible(False)
             self.player.dashing = False
@@ -162,8 +167,9 @@ class Game:
         # Hit detection
         for bullet in self.get_entities_from_name('enemy_bullet'):
             if self.player.hit(bullet) and not self.player.intangible:
-                self.player.take_damage(25, self.sounds['player_hit']['sound'], self.sounds['explosion']['sound'])
-        
+                self.player.take_damage(
+                    25, self.sounds['player_hit']['sound'], self.sounds['explosion']['sound'])
+
         # Hit frames handling
         if self.player.current_hit_frames > 0 and self.player.taken_damage:
             self.player.current_hit_frames -= 1
@@ -181,8 +187,9 @@ class Game:
             # Hit detection
             for bullet in self.get_entities_from_name('player_bullet'):
                 if enemy.hit(bullet) and not enemy.intangible:
-                    enemy.take_damage(25, self.sounds['enemy_hit']['sound'], self.sounds['explosion']['sound'])
-            
+                    enemy.take_damage(
+                        25, self.sounds['enemy_hit']['sound'], self.sounds['explosion']['sound'])
+
             # Hit frames handling
             if enemy.current_hit_frames > 0 and enemy.taken_damage:
                 enemy.current_hit_frames -= 1
@@ -203,25 +210,32 @@ class Game:
 
     def handle_items(self):
         for item in self.get_entities_like_name('item'):
-                if self.player.hit(item.rect):
-                    item.apply_effect(self.player)
-                    pygame.time.set_timer(self.player_bullet_ready, self.player.fire_rate) # TODO temp
-                    mixer.Sound.set_volume(self.sounds['bullet']['sound'], self.sounds['bullet']['volume']-0.01)
-                    item.name = 'to_be_deleted'
-     
+            if self.player.hit(item.rect):
+                item.apply_effect(self.player)
+                pygame.time.set_timer(
+                    self.player_bullet_ready, self.player.fire_rate)  # TODO temp
+                mixer.Sound.set_volume(
+                    self.sounds['bullet']['sound'], self.sounds['bullet']['volume']-0.01)
+                item.name = 'to_be_deleted'
+
     def draw_ui(self):
         self.draw_sound_icon()
 
     def draw_sound_icon(self):
         if not self.muted:
-            self.screen.blit(self.images['unmuted_icon'], (WINDOW_SIZE[0] - 40, WINDOW_SIZE[1] - 40))
+            self.screen.blit(
+                self.images['unmuted_icon'], (WINDOW_SIZE[0] - 40, WINDOW_SIZE[1] - 40))
         else:
-            self.screen.blit(self.images['muted_icon'], (WINDOW_SIZE[0] - 40, WINDOW_SIZE[1] - 40))
+            self.screen.blit(
+                self.images['muted_icon'], (WINDOW_SIZE[0] - 40, WINDOW_SIZE[1] - 40))
 
     def load_images(self):
-        unmuted_icon_surf = pygame.image.load("assets/images/unmuted_icon.png").convert_alpha()
-        muted_icon_surf = pygame.image.load("assets/images/muted_icon.png").convert_alpha()
-        increase_fire_rate_icon_surf = pygame.image.load("assets/images/item_increase_fire_rate_icon.png").convert_alpha()
+        unmuted_icon_surf = pygame.image.load(
+            "assets/images/unmuted_icon.png").convert_alpha()
+        muted_icon_surf = pygame.image.load(
+            "assets/images/muted_icon.png").convert_alpha()
+        increase_fire_rate_icon_surf = pygame.image.load(
+            "assets/images/item_increase_fire_rate_icon.png").convert_alpha()
 
         self.images = {
             'unmuted_icon': unmuted_icon_surf,
@@ -233,11 +247,12 @@ class Game:
 
     def load_sounds(self):
         # Background music
-        mixer.music.load(f"assets/sound/music/gameloop{random.randint(1, 3)}.ogg")
-        mixer.music.set_volume(0.2) 
+        mixer.music.load(
+            f"assets/sound/music/gameloop{random.randint(1, 3)}.ogg")
+        mixer.music.set_volume(0.2)
 
         # Sound effects
-        bullet_sound = mixer.Sound("assets/sound/effects/laser.wav")  
+        bullet_sound = mixer.Sound("assets/sound/effects/laser.wav")
         dash_sound = mixer.Sound("assets/sound/effects/dash.wav")
         player_hit_sound = mixer.Sound("assets/sound/effects/player_hit.wav")
         enemy_hit_sound = mixer.Sound("assets/sound/effects/enemy_hit.wav")
@@ -252,7 +267,8 @@ class Game:
         }
 
         for sound in self.sounds:
-            mixer.Sound.set_volume(self.sounds[sound]['sound'], self.sounds[sound]['volume'])
+            mixer.Sound.set_volume(
+                self.sounds[sound]['sound'], self.sounds[sound]['volume'])
 
     def play_background_music(self):
         mixer.music.play(-1)
@@ -265,7 +281,8 @@ class Game:
     def unmute_all_sounds(self):
         mixer.music.set_volume(0.2)
         for sound in self.sounds:
-            mixer.Sound.set_volume(self.sounds[sound]['sound'], self.sounds[sound]['volume'])
+            mixer.Sound.set_volume(
+                self.sounds[sound]['sound'], self.sounds[sound]['volume'])
 
     def add_entity(self, entity):
         self.entities[entity.id] = entity
@@ -289,15 +306,19 @@ class Game:
 
     def create_enemies(self):
         number_of_enemies = 3
-        enemies = [Enemy(0, 0, 32, 32, RED, 'enemy', max_health=100) for i in range(number_of_enemies)]
+        enemies = [Enemy(0, 0, 32, 32, RED, 'enemy', max_health=100)
+                   for i in range(number_of_enemies)]
 
         for i, enemy in enumerate(enemies):
-            enemy.set_center_position((WINDOW_SIZE[0]/(number_of_enemies+1)*(i+1), WINDOW_SIZE[1]/2 - 300))
+            enemy.set_center_position(
+                (WINDOW_SIZE[0]/(number_of_enemies+1)*(i+1), WINDOW_SIZE[1]/2 - 300))
             self.add_entity(enemy)
 
     def create_items(self):
-        item_increased_fire_rate = Item(0, 0, 1, 1, None, 'item_increase_fire_rate', self.images['items']['increase_fire_rate'])
-        item_increased_fire_rate.set_center_position((WINDOW_SIZE[0]/9, WINDOW_SIZE[1]*0.8))
+        item_increased_fire_rate = Item(
+            0, 0, 1, 1, None, 'item_increase_fire_rate', self.images['items']['increase_fire_rate'])
+        item_increased_fire_rate.set_center_position(
+            (WINDOW_SIZE[0]/9, WINDOW_SIZE[1]*0.8))
         self.add_entity(item_increased_fire_rate)
 
     def create_camera(self):

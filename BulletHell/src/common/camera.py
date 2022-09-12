@@ -1,4 +1,4 @@
-import pygame 
+import pygame
 from .settings import *
 
 
@@ -16,16 +16,16 @@ class Camera:
 
     def update(self, entity):
         self.center_target_position()
-        entity.rect.topleft = entity.rect.topleft - self.offset
-        entity.x = entity.x - self.offset.x
-        entity.y = entity.y - self.offset.y
+        entity.rect.topleft-= self.offset
+        entity.x -= self.offset.x
+        entity.y -= self.offset.y
 
     def update_all(self, entities):
         self.center_target_position()
         for entity in entities.values():
-            entity.rect.topleft = entity.rect.topleft - self.offset
-            entity.rect.x = entity.rect.x - self.offset.x
-            entity.rect.y = entity.rect.y - self.offset.y
-
-
-
+            entity.rect.topleft -= self.offset
+            entity.rect.x -= self.offset.x
+            entity.rect.y -= self.offset.y
+            
+    def get_world_pos(self, rect):
+        return rect.x - self.offset.x, rect.y - self.offset.y
