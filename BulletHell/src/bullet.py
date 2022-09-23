@@ -1,4 +1,3 @@
-import pygame
 import math
 from .common.settings import *
 from .common.ui_utils import *

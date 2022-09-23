@@ -1,3 +1,4 @@
+from operator import imod
 import pygame
 import math
 from .settings import *
@@ -7,7 +8,7 @@ from .lifebar import Lifebar
 class Entity:
     unique_id = 0
 
-    def __init__(self, x, y, width, height, color, name="unnamed_entity", max_health=999999):
+    def __init__(self, x, y, width, height, color, name="unnamed_entity", max_health=999999, immortal=False):
         self.name = name
         self.id = Entity.unique_id
         Entity.unique_id += 1
@@ -25,6 +26,7 @@ class Entity:
         self.lifebar = None
         self.max_health = max_health
         self.health = max_health
+        self.immortal = immortal
 
     def update(self):
         if self.velx == 0 or self.vely == 0:
@@ -75,9 +77,10 @@ class Entity:
             return False
 
     def take_damage(self, damage):
-        self.health -= damage
-        if self.health <= 0:
-            self.health = 0
+        if not self.immortal:
+            self.health -= damage
+            if self.health <= 0:
+                self.health = 0
 
     def alive(self):
         if self.health <= 0:

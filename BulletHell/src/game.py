@@ -1,13 +1,13 @@
-import random
 import pygame
-from pygame import mixer
 import sys
-import time
+import random
+from pygame import mixer
 from .common.settings import *
 from .common.ui_utils import *
 from .player import Player
 from .enemy import Enemy
 from .item import Item
+from .world_map import world_map
 from .common.camera import Camera
 
 
@@ -119,6 +119,8 @@ class Game:
         self.create_enemies()
         self.create_items()
         self.create_camera()
+        
+        self.create_world_map()
 
         self.muted = False
         self.play_background_music()
@@ -324,3 +326,10 @@ class Game:
     def create_camera(self):
         self.camera = Camera(self.screen)
         self.camera.set_center_target(self.player)
+
+    def create_world_map(self):
+        self.world_map = world_map
+        
+        for i, row in enumerate(world_map):
+            for j, col in enumerate(row):
+                pass # TODO
