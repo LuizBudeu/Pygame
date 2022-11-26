@@ -20,6 +20,8 @@ class Particle:
             j (int): j index.
             type (ParticleTypes): particle type.
         """
+        self.i = i 
+        self.j = j
         x, y = ij_to_pos(i, j)
         self.rect = pygame.Rect(x, y, WINDOW_SIZE[0]//GRID_SIZE, WINDOW_SIZE[1]//GRID_SIZE)
         self.type = type
@@ -50,10 +52,28 @@ class Sand(Particle):
             j (int): j index.
         """
         super().__init__(i, j, ParticleTypes.SAND)
+        self.frame_velocity = 10
 
-    def update(self):
-        pass
-
+    def update(self, grid: list[list[int]], frame_count: int = 0):
+        if self.j+1 < GRID_SIZE:
+            if grid[self.i][self.j+1] == 0:
+                self.j += 1
+            elif grid[self.i-1][self.j+1] == 0:
+                self.i -= 1
+                self.j += 1
+                print('left')
+            elif grid[self.i+1][self.j+1] == 0:
+                self.i += 1
+                self.j += 1
+                print('right')
+        else:
+            if grid[self.i-1][self.j] == 0:
+                self.i -= 1
+            elif grid[self.i+1][self.j] == 0:
+                self.i += 1
+        
+        self.rect.topleft = ij_to_pos(self.i, self.j)
+        # print(self.i, self.j)
 
 class Water(Particle):
     def __init__(self, i: int, j: int):
@@ -65,7 +85,7 @@ class Water(Particle):
         """
         super().__init__(i, j, ParticleTypes.WATER)
 
-    def update(self):
+    def update(self, grid):
         pass
     
 
@@ -79,5 +99,5 @@ class Wood(Particle):
         """
         super().__init__(i, j, ParticleTypes.WOOD)
 
-    def update(self):
+    def update(self, grid):
         pass

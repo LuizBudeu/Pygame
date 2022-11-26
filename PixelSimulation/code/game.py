@@ -7,7 +7,7 @@ from .particle_manager import ParticleManager
 from .particle_types import ParticleTypes
 
 
-FPS = 300
+FPS = 20
 
 class Game:
     def __init__(self):
@@ -82,11 +82,18 @@ class Game:
         self.dragging = False
         self.particle_manager = ParticleManager(self.particles, self.grid)
         self.particle_selected = ParticleTypes.SAND
+        self.frame_count = 0
         
     def update(self):
         """Updates the game every frame.
         """
         self.screen_update()
+        self.frame_count += 1
+        if self.frame_count >= FPS:
+            self.frame_count = 0
+            
+        # print(f'FPS: {self.clock.get_fps()}')
+        # print(self.frame_count)
         
     def start_game(self):
         """Starts the game (initialization and game loop).

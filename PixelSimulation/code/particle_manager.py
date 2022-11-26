@@ -44,6 +44,6 @@ class ParticleManager:
                 screen (pygame.Surface): game screen.
             """
             for particle in self.particles:
-                particle.update()
+                particle.update(self.grid)
                 particle.draw(screen)
         
