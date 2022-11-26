@@ -2,6 +2,6 @@ from enum import Enum
 
 
 class ParticleTypes(Enum):
-    SAND = 0
-    WATER = 1
-    WOOD = 2
+    SAND = 1
+    WATER = 2
+    WOOD = 3

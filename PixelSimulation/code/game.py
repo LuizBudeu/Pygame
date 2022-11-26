@@ -2,7 +2,7 @@ import pygame
 import sys
 from .common.settings import *
 from .common.ui_utils import *
-from .particle import Particle
+from .particle_manager import ParticleManager
 from .particle_types import ParticleTypes
 
 
@@ -20,7 +20,6 @@ class Game:
             self.draw_background()
             
             for event in pygame.event.get():
-                # Quit event
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -36,6 +35,15 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.particles.clear()
+                        
+                    if event.key == pygame.K_1:
+                        self.particle_selected = ParticleTypes.SAND
+                        
+                    if event.key == pygame.K_2:
+                        self.particle_selected = ParticleTypes.WATER
+                    
+                    if event.key == pygame.K_3:
+                        self.particle_selected = ParticleTypes.WOOD
 
             self.update()                    
                     
@@ -47,26 +55,20 @@ class Game:
             self.draw_grid()
         
         self.check_dragging()
-        self.handle_particles()
+        self.particle_manager.handle_particles(self.screen)
     
     def check_dragging(self):
         if self.dragging:
             mx, my = get_mouse_pos()
-            self.create_particle(mx, my, ParticleTypes.SAND)
-
-    def create_particle(self, mx, my, type):
-        self.particles.append(Particle(mx*GRID_SIZE//WINDOW_SIZE[0], my*GRID_SIZE//WINDOW_SIZE[1], type))
-
-    def handle_particles(self):
-        for particle in self.particles:
-            particle.update()
-            particle.draw(self.screen)
+            self.particle_manager.create_particle(mx, my, self.particle_selected)
             
     def init_game(self):
         self.debug = True
         self.grid = [[0 for i in range(GRID_SIZE)] for j in range(GRID_SIZE)]
         self.particles = []
         self.dragging = False
+        self.particle_manager = ParticleManager(self.particles, self.grid)
+        self.particle_selected = ParticleTypes.SAND
         
     def update(self):
         self.screen_update()
@@ -82,3 +84,4 @@ class Game:
     
     def draw_background(self):
         self.screen.fill((16, 20, 82))
+        
