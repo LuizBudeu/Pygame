@@ -25,6 +25,9 @@ class Particle:
         x, y = ij_to_pos(i, j)
         self.rect = pygame.Rect(x, y, WINDOW_SIZE[0]//GRID_SIZE, WINDOW_SIZE[1]//GRID_SIZE)
         self.type = type
+        self.previ = None 
+        self.prevj = None
+        self.stationary = False
         
     def update(self):
         """Updates the particle. 
@@ -55,22 +58,26 @@ class Sand(Particle):
         self.frame_velocity = 10
 
     def update(self, grid: list[list[int]], frame_count: int = 0):
-        if self.j+1 < GRID_SIZE:
+        if not self.stationary:
+            self.previ = self.i
+            self.prevj = self.j
+        
+        if 0 < self.i+1 < GRID_SIZE and 0 < self.j+1 < GRID_SIZE:
             if grid[self.i][self.j+1] == 0:
                 self.j += 1
+                # print('sand falling')
             elif grid[self.i-1][self.j+1] == 0:
                 self.i -= 1
                 self.j += 1
-                print('left')
+                # print('left')
             elif grid[self.i+1][self.j+1] == 0:
                 self.i += 1
                 self.j += 1
-                print('right')
+                # print('right')
+            else: 
+                self.stationary = True
         else:
-            if grid[self.i-1][self.j] == 0:
-                self.i -= 1
-            elif grid[self.i+1][self.j] == 0:
-                self.i += 1
+            self.stationary = True
         
         self.rect.topleft = ij_to_pos(self.i, self.j)
         # print(self.i, self.j)

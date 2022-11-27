@@ -3,6 +3,7 @@ from .particles import Sand, Water, Wood
 from .particle_types import ParticleTypes
 from .common.settings import *
 from .common.funcs import *
+from .common.ui_utils import *
 
 
 rel: dict[ParticleTypes, Sand|Water|Wood] = {
@@ -46,4 +47,6 @@ class ParticleManager:
             for particle in self.particles:
                 particle.update(self.grid)
                 particle.draw(screen)
+                pos = ij_to_pos(particle.i, particle.j)
+                # write_text(screen, f"{particle.stationary}", 20, (255, 255, 255), pos)
         

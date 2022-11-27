@@ -40,6 +40,7 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.particles.clear()
+                        self.grid = [[0 for i in range(GRID_SIZE)] for j in range(GRID_SIZE)]
                         
                     if event.key == pygame.K_1:
                         self.particle_selected = ParticleTypes.SAND
@@ -63,16 +64,30 @@ class Game:
         
         self.check_dragging()
         self.particle_manager.handle_particles(self.screen)
-    
-    def check_dragging(self):
-        """Checks if the user is dragging the mouse.
+        self.update_grid()
+        print(len(self.particles))
+        
+        for i in range(GRID_SIZE):
+            for j in range(GRID_SIZE):
+                write_text(self.screen, str(self.grid[i][j]), 20, (255, 255, 255), topleft_pos=(i*WINDOW_SIZE[0]//GRID_SIZE, j*WINDOW_SIZE[1]//GRID_SIZE))
+        
+    def update_grid(self):
+        """Updates the grid matrix.
         """
-        if self.dragging:
-            mx, my = get_mouse_pos()
-            i, j = pos_to_ij(mx, my)
-            self.particle_manager.create_particle(self.particle_selected, i=i, j=j)
-            self.grid[i][j] = self.particle_selected.value
+        for particle in self.particles:
+            # print(particle.i, particle.j)
+            self.grid[particle.i][particle.j] = particle.type.value
+            if not particle.stationary:
+                self.grid[particle.previ][particle.prevj] = 0
             
+    def update(self):
+        """Updates the game every frame.
+        """
+        self.screen_update()
+        self.frame_count += 1
+        if self.frame_count >= FPS:
+            self.frame_count = 0
+        
     def init_game(self):
         """Initializes the game variables and objects.
         """
@@ -84,16 +99,15 @@ class Game:
         self.particle_selected = ParticleTypes.SAND
         self.frame_count = 0
         
-    def update(self):
-        """Updates the game every frame.
+    def check_dragging(self):
+        """Checks if the user is dragging the mouse.
         """
-        self.screen_update()
-        self.frame_count += 1
-        if self.frame_count >= FPS:
-            self.frame_count = 0
-            
-        # print(f'FPS: {self.clock.get_fps()}')
-        # print(self.frame_count)
+        if self.dragging:
+            mx, my = get_mouse_pos()
+            i, j = pos_to_ij(mx, my)
+            if self.grid[i][j] == 0:
+                self.particle_manager.create_particle(self.particle_selected, i=i, j=j)
+                self.grid[i][j] = self.particle_selected.value
         
     def start_game(self):
         """Starts the game (initialization and game loop).
