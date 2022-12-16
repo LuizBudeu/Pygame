@@ -1,6 +1,6 @@
 # DECLARAÇÃO DE BIBLIOTECAS
 import pygame
-import sys
+import sys, os
 import random
 
 
@@ -9,10 +9,10 @@ import random
 pygame.init()
 screen = pygame.display.set_mode((532, 850))    
 clock = pygame.time.Clock()    # Cria um clock para ditar o framerate
-files_path = 'D:/User/VS Code testes/pythonzera/Pygame/Doodle jump/Game files/'
+files_path = os.getcwd() + '/Game files/'
 # Pra setar o ícone
 pygame.display.set_caption("Doodle jump")
-icon = pygame.image.load(files_path + "icon.png")
+icon = pygame.image.load(files_path+"icon.png")
 pygame.display.set_icon(icon)
 score_font = pygame.font.Font("freesansbold.ttf", 50)
 
