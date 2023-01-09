@@ -1,5 +1,5 @@
-from common.settings import *
-from common.ui_utils import *
+from .common.settings import *
+from .common.ui_utils import *
 
 
 world_map = {}

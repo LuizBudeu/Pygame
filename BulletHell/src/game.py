@@ -120,7 +120,7 @@ class Game:
         self.create_items()
         self.create_camera()
         
-        self.create_world_map()
+        # self.create_world_map()  
 
         self.muted = False
         self.play_background_music()

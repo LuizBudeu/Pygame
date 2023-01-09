@@ -1,4 +1,3 @@
-from operator import imod
 import pygame
 import math
 from .settings import *
