@@ -1,18 +1,17 @@
 import pygame 
-from pygame import Vector2 as Vec
 import math
 from ..settings import *
 from .ui_utils import *
 
 
-class GameObject:
+class GameManagerObject:
     def __init__(
         self,
         center_pos: tuple[int, int] = (100, 100),
         topleft_pos: tuple[int, int] | None = None,
         dim: tuple[int, int] = (100, 100),
         surf: pygame.Surface | None = None,
-        name: str = "GameObject",
+        name: str = "GameManagerObject",
         rect_color: tuple[int, int, int] = RED,
         ) -> None:
         """This is the __init__ method of a class representing a game object in the framework.
@@ -22,7 +21,7 @@ class GameObject:
             topleft_pos: A tuple of two integers representing the top-left position of the game object on the screen. This argument is optional and the default value is None.
             dim: A tuple of two integers representing the width and height of the game object. This argument is optional and the default value is None.
             surf: A Pygame surface representing the sprite image of the game object. This argument is optional and the default value is None.
-            name: A string representing the name of the game object. The default value is "GameObject".
+            name: A string representing the name of the game object. The default value is "GameManagerObject".
             rect_color: A tuple of three integers representing the color of the rectangular area that surrounds the game object. The default value is RED (255, 0, 0).
         """        
         
@@ -30,7 +29,6 @@ class GameObject:
         self.surf = surf
         self.has_sprite = surf is not None
         self.rect_color = rect_color
-        self.pos = Vec()
         
         if not self.has_sprite:
             if topleft_pos is None:
@@ -76,10 +74,10 @@ class GameObject:
             else:
                 self.rect.x += self.velx / math.sqrt(2)
                 self.rect.y += self.vely / math.sqrt(2)
-                        
+                
     def write_name(self) -> None:
         """Writes the name of the game object on the rect center.
         """            
         
-        write_text(self.name, self.rect.center, font_size=15, color=BLACK)
+        write_text(self.name, self.rect.center, font_size=15, color=(255, 255, 255))
             

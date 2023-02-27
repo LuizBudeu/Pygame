@@ -1,7 +1,8 @@
-# WINDOW_SIZE = (1820, 980)
-WINDOW_SIZE = (800, 700)
+WINDOW_SIZE = (1820, 980)
+FPS = 60
 
-FPS = 120
+GRAVITY: float = 0.0981
+PRECISION: float = 0.00001
 
 
 LIGHTBLUE = (116, 247, 241)
@@ -25,3 +26,10 @@ LIGHTBROWN = (161, 90, 35)
 LIGHTGRAY = (161, 161, 161)
 NIGHTBLUE = (22, 22, 43)
 LIGHTRED = (250, 94, 82)
+
+
+FORCE_COLORS: dict = {
+    "gravity_force": BLACK,
+    "normal_force": GREEN,
+    "friction_force": BROWN,
+}

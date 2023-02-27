@@ -1,5 +1,4 @@
 import pygame 
-from pygame import Vector2 as Vec
 import math
 from ..settings import *
 from .ui_utils import *
@@ -30,7 +29,6 @@ class GameObject:
         self.surf = surf
         self.has_sprite = surf is not None
         self.rect_color = rect_color
-        self.pos = Vec()
         
         if not self.has_sprite:
             if topleft_pos is None:
@@ -76,10 +74,10 @@ class GameObject:
             else:
                 self.rect.x += self.velx / math.sqrt(2)
                 self.rect.y += self.vely / math.sqrt(2)
-                        
+                
     def write_name(self) -> None:
         """Writes the name of the game object on the rect center.
         """            
         
-        write_text(self.name, self.rect.center, font_size=15, color=BLACK)
+        write_text(self.name, self.rect.center, font_size=15, color=(255, 255, 255))
             
